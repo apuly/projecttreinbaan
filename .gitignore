@@ -1,0 +1,7 @@
+#files for git to ignore
+#keeps the repository clean
+*.o
+*.swp
+~$*
+*.out
+*.exe
