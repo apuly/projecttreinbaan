@@ -1,9 +1,9 @@
+#include "proces.h"
+
 #ifndef _ONTKOPPELAAR_H_
 #define _ONTKOPPELAAR_H_
 
-#define ONTKOPPELAAR_HOOG_LAAG 0
-
-_PROTOTYPE( void hoog_laag, (void));
+void ontkoppel_start (struct exec_data *data);
 
 #endif /* _ONTKOPPELAAR_H_ */
 
