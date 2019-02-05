@@ -16,8 +16,11 @@ void stuur_alphabet(struct exec_data *data, int proces_type,
                                  int proces_id, int *alpha,
                                  const int alpha_c);
 
-void stuur_sensitivity(int *sensitivity, int num_sens);
-int ontvang_actie(void);
+void change_sens(int new_state);
+int action_compare(char *action);
+void send_sensitivity(int *sensitivity, struct exec_data *data);
+/*void send_sensitivity(int *sensitivity, int num_sens);*/ /*waar is int num_sens voor nodig?*/
+char *receive_action(char *action, struct exec_data *data);
 
 
 #endif /* _TREINBAAN_PROCES_H_ */
