@@ -47,7 +47,7 @@ void change_sens(int action)
 		break; 
 	  case STOP:
 	    SENSITIVITY[0] = RIJ_VOORUIT;
-	    SENSITIVITY[0] = RIJ_ACHTERUIT;
+	    SENSITIVITY[1] = RIJ_ACHTERUIT;
 		break; 
 	  case RIJ_VOORUIT:
 	    SENSITIVITY[0] = LANGZAAM;
