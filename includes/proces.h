@@ -7,7 +7,6 @@
 #define SENSOR_PROCES 3
 
 struct exec_data { /* data for executing tasks */
-  int system_id; /* lokaal ID voor communicatie met synchronisatie server */
   int read_fd; /* file discriptor to read from parent proces */
   int write_fd; /* file discriptor to write to parent proces */
 };

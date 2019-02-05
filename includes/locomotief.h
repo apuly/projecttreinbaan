@@ -5,4 +5,6 @@
 
 void locomotief_start (struct exec_data *data);
 
+#define NUM_LOCO_SENS 5
+
 #endif

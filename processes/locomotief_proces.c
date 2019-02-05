@@ -12,8 +12,6 @@ void locomotief_start(struct exec_data *data)
 {
 
   const int ALPHABET[] = {SNEL, LANGZAAM, STOP, RIJ_VOORUIT, RIJ_ACHTERUIT};
-  printf("Locomotief %d sending sensitivity!\n", data->system_id);
-  
   stuur_alphabet(data, ALPHABET, alpha_c);
   while(1)
   {
