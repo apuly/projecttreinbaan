@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "../includes/sensor.h"
 #include "../includes/alphabet.h"
@@ -12,12 +14,12 @@ const int ALPHABET[] = {HOOG_LAAG};
 
 void sensor_start(struct exec_data *data)
 {
-  stuur_alphabet(data, SENSOR_PROCES, data->system_id, ALPHABET, alpha_c);
-  exit(0);
+  stuur_alphabet(data, ALPHABET, alpha_c);
   while(1)
   {
-    
+    sleep(1);    
   }
+  printf("exiting!");
 }
 
 

@@ -12,9 +12,7 @@ struct exec_data { /* data for executing tasks */
   int write_fd; /* file discriptor to write to parent proces */
 };
 
-void stuur_alphabet(struct exec_data *data, int proces_type,
-                                 int proces_id, int *alpha,
-                                 const int alpha_c);
+void stuur_alphabet(struct exec_data *data, int *alpha, const int alpha_c);
 
 void stuur_sensitivity(int *sensitivity, int num_sens);
 int ontvang_actie(void);

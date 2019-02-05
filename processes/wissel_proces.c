@@ -1,5 +1,6 @@
 #include <stdlib.h>
-
+#include <unistd.h>
+#include <stdio.h>
 #include "../includes/wissel.h"
 #include "../includes/alphabet.h"
 #include "../includes/proces.h"
@@ -11,12 +12,12 @@ void wissel_start(struct exec_data *data)
 {
   const int ALPHABET[] = {RECHT, KROM};
 
-  stuur_alphabet(data, WISSEL_PROCES, data->system_id, ALPHABET, alpha_c);
-  exit(0);
+/*  stuur_alphabet(data, ALPHABET, alpha_c);*/
   while(1)
   {
-    
+    sleep(1);
   }
+  printf("exiting");
 }
 
 
