@@ -17,7 +17,6 @@ void stuur_alphabet(struct exec_data *data, int proces_type,
                                  const int alpha_c);
 
 void change_sens(int new_state);
-int action_compare(char *action);
 void send_sensitivity(int *sensitivity, struct exec_data *data);
 /*void send_sensitivity(int *sensitivity, int num_sens);*/ /*waar is int num_sens voor nodig?*/
 char *receive_action(char *action, struct exec_data *data);

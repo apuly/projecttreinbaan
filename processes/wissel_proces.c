@@ -17,7 +17,6 @@ int SENSITIVITY[] = {KROM};
 void wissel_start(struct exec_data *data)
 {
   char *action;
-  int new_state;
 
   stuur_alphabet(data, WISSEL_PROCES, data->system_id, ALPHABET, alpha_c);
   exit(0);
