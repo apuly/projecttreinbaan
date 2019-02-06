@@ -6,50 +6,59 @@
 #define alpha_c (sizeof(ALPHABET) / sizeof(int))
 
 const int ALPHABET[] = {SNEL, LANGZAAM, STOP, RIJ_VOORUIT, RIJ_ACHTERUIT};
-int SENSITIVITY[alpha_c] = {RIJ_VOORUIT};
+/*  const int ALPHABET[] = {SNEL, LANGZAAM, STOP, VOORUIT, ACHTERUIT};*/
+int NEW_SENS[alpha_c];
+int CURRENT_SENS[alpha_c];
 
 void locomotief_start(struct exec_data *data)
 {
   char *action;
-
-  const int ALPHABET[] = {SNEL, LANGZAAM, STOP, VOORUIT, ACHTERUIT};
-  stuur_alphabet(data, ALPHABET, alpha_c);
-  while(1){
-    sleep(10);
-  }
+  send_alphabet(data, LOCOMOTIEF_PROCES, data->system_id, ALPHABET, alpha_c);
+  NEW_SENS[0] = RIJ_VOORUIT;
+  NEW_SENS[1] = RIJ_ACHTERUIT;
+  send_sensitivity(CURRENT_SENS, NEW_SENS, data);
+  /*exit(0);*/
   
-  printf("exiting!");
+  while(1)
+  {
+    /*Recieve action, change sensitivity, send old and new sensitivity*/
+	action = receive_action(action, data);
+	change_sens(*action,  NEW_SENS);
+	send_sensitivity(CURRENT_SENS, NEW_SENS, data);
+  }
 }
 
 char *receive_action(char *action, struct exec_data *data)
 {
+	/*read data from SynchronisationServer pipe*/
 	read(data->read_fd, &action, sizeof(action));
 	return action;
 }
 
-void change_sens(int action)
+void change_sens(int action, int *NEW_SENS)
 {
+  /*change the new sensitivity*/
   switch(action)
     {
 	  case SNEL:
-	    SENSITIVITY[0] = LANGZAAM;
-		SENSITIVITY[1] = STOP;
+	    NEW_SENS[0] = LANGZAAM;
+		NEW_SENS[1] = STOP;
 		break;
 	  case LANGZAAM:
-	    SENSITIVITY[0] = SNEL;
-		SENSITIVITY[1] = STOP;
+	    NEW_SENS[0] = SNEL;
+		NEW_SENS[1] = STOP;
 		break; 
 	  case STOP:
-	    SENSITIVITY[0] = RIJ_VOORUIT;
-	    SENSITIVITY[0] = RIJ_ACHTERUIT;
+	    NEW_SENS[0] = RIJ_VOORUIT;
+	    NEW_SENS[1] = RIJ_ACHTERUIT;
 		break; 
 	  case RIJ_VOORUIT:
-	    SENSITIVITY[0] = LANGZAAM;
-		SENSITIVITY[1] = SNEL;
+	    NEW_SENS[0] = LANGZAAM;
+		NEW_SENS[1] = SNEL;
 		break; 
 	  case RIJ_ACHTERUIT:
-	    SENSITIVITY[0] = LANGZAAM;
-		SENSITIVITY[1] = SNEL;
+	    NEW_SENS[0] = LANGZAAM;
+		NEW_SENS[1] = SNEL;
 		break; 
 	  default:
         printf("Command %d id invalid!\n", action);
@@ -57,9 +66,11 @@ void change_sens(int action)
     }
 }
 
-void send_sensitivity(int *sensitivity, struct exec_data *data)
+void send_sensitivity(int *CURRENT_SENS, int *NEW_SENS, struct exec_data *data)
 {
-	write(data->write_fd, &sensitivity, sizeof(sensitivity));
+	/*write data to SynchronisationServer pipe*/
+	write(data->write_fd, &CURRENT_SENS, alpha_c);
+	write(data->write_fd, &NEW_SENS, alpha_c);
 }
 
 
