@@ -17,7 +17,6 @@ void ontkoppel_start(struct exec_data *data)
 {
   char *action;
 
-<<<<<<< HEAD
   stuur_alphabet(data, ONTKOPPEL_PROCES, data->system_id, ALPHABET, alpha_c);
   exit(0);
   while(1)
@@ -26,13 +25,7 @@ void ontkoppel_start(struct exec_data *data)
 	action = receive_action(action, data);
 	change_sens(*action);
 	send_sensitivity(SENSITIVITY, data);
-=======
-  stuur_alphabet(data, ALPHABET, alpha_c);
-  while(1){
-    sleep(10);
->>>>>>> 0e790f8d6c3836c5251b364c90489ae6564dcb10
   }
-  printf("exiting!");
 }
 
 char *receive_action(char *action, struct exec_data *data)
