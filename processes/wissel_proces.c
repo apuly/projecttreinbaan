@@ -1,10 +1,7 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <unistd.h>
-#include <string.h>
-
+#include <stdio.h>
 #include "../includes/wissel.h"
-#include "../includes/alphabet.h"
 #include "../includes/proces.h"
 
 #define alpha_c (sizeof(ALPHABET) / sizeof(int))
@@ -18,6 +15,7 @@ void wissel_start(struct exec_data *data)
 {
   char *action;
 
+<<<<<<< HEAD
   stuur_alphabet(data, WISSEL_PROCES, data->system_id, ALPHABET, alpha_c);
   exit(0);
   
@@ -27,7 +25,13 @@ void wissel_start(struct exec_data *data)
 	action = receive_action(action, data);
 	change_sens(*action);
 	send_sensitivity(SENSITIVITY, data);
+=======
+  stuur_alphabet(data, ALPHABET, alpha_c);
+  while(1){
+    sleep(10);
+>>>>>>> 0e790f8d6c3836c5251b364c90489ae6564dcb10
   }
+  printf("exiting");
 }
 
 char *receive_action(char *action, struct exec_data *data)
