@@ -7,11 +7,12 @@
 #define alpha_c (sizeof(ALPHABET) / sizeof(int))
 
 
-void locomotief_start(struct exec_data *data)
+void locomotief_start(struct exec_data data)
 {
 
   const int ALPHABET[] = {SNEL, LANGZAAM, STOP, VOORUIT, ACHTERUIT};
-  stuur_alphabet(data, ALPHABET, alpha_c);
+  printf("starting locomotief proces!");
+  stuur_alphabet(&data, ALPHABET, alpha_c);
   while(1){
     sleep(10);
   }

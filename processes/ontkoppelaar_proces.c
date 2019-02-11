@@ -9,12 +9,12 @@
 #define alpha_c (sizeof(ALPHABET) / sizeof(int))
 
 
-void ontkoppel_start(struct exec_data *data)
+void ontkoppel_start(struct exec_data data)
 {
   
   const int ALPHABET[] = {HOOG_LAAG};
 
-  stuur_alphabet(data, ALPHABET, alpha_c);
+  stuur_alphabet(&data, ALPHABET, alpha_c);
   while(1){
     sleep(10);
   }

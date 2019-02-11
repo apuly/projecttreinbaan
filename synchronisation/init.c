@@ -47,7 +47,7 @@ void init_proces_data(struct proces_data ***data)
   for (i=0; i<NUM_PROCES_TYPES; i++){
     size = sizeof(struct proces_data) * get_num_procs(i);
     (*data)[i] = malloc(size);
-    printf("%d, %d: %x\n", i, get_num_procs(i), (*data)[i]);
+    /*printf("%d, %d: %x\n", i, get_num_procs(i), (*data)[i]);*/
   }
 }
 
@@ -99,24 +99,27 @@ char init_process(struct proces_data *data, char target_proces, int proces_id)
     return -1;
   } else if (pid == 0){
     /* the child proces */
+    
     close(to_child[1]);
     close(from_child[0]);
     
     child_data.read_fd = to_child[0];
     child_data.write_fd = from_child[1];
+    child_data.proces_id = target_proces;
+    child_data.system_id = proces_id;
 
     switch (target_proces){
       case WISSEL_PROCES:
-        wissel_start(&child_data);
+        wissel_start(child_data);
         break;
       case ONTKOPPEL_PROCES:
-        ontkoppel_start(&child_data);
+        ontkoppel_start(child_data);
         break;
       case LOCOMOTIEF_PROCES:
-        locomotief_start(&child_data);
+        locomotief_start(child_data);
         break;
       case SENSOR_PROCES:
-        sensor_start(&child_data);
+        sensor_start(child_data);
         break;
     }
     exit(0);

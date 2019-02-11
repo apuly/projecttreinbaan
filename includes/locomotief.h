@@ -11,6 +11,6 @@
 
 #define NUM_LOCO_SENS 5
 
-void locomotief_start (struct exec_data *data);
+void locomotief_start (struct exec_data data);
 
 #endif

@@ -60,7 +60,7 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
   struct proces_data **data;
   struct sensitivity ***sens;
   int command, param[10], paramc;
-  
+  int avail;  
   data = *data_;
   sens = *sens_;
   printf("starting to synchronise!\n");
@@ -69,8 +69,9 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
     for(i=0; i<NUM_PROCES_TYPES; i++){
       num_procs = get_num_procs(i);
       for(j=0; j<num_procs; j++){
-        if (data_available(&(data[i][j]))){ 
-          printf("received command from %d:%d!\n", i, j);
+        avail = data_available(&(data[i][j]));
+        if (avail){
+
           read_command(data[i][j].read_fd, &command, param, &paramc);
           
           printf("cmd: %d, paramc: %d.\n", command, paramc);

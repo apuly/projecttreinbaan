@@ -11,9 +11,9 @@
 
 const int ALPHABET[] = {HOOG, LAAG};
 
-void sensor_start(struct exec_data *data)
+void sensor_start(struct exec_data data)
 {
-  stuur_alphabet(data, ALPHABET, alpha_c);
+  stuur_alphabet(&data, ALPHABET, alpha_c);
   while(1){
     sleep(10);
   }

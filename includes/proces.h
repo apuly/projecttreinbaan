@@ -9,6 +9,8 @@
 struct exec_data { /* data for executing tasks */
   int read_fd; /* file discriptor to read from parent proces */
   int write_fd; /* file discriptor to write to parent proces */
+  int proces_id; /* the identifier for the proces */
+  int system_id; /* the id of the proces within the system */
 };
 
 void stuur_alphabet(struct exec_data *data, int *alpha, const int alpha_c);
