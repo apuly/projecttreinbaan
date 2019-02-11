@@ -33,3 +33,24 @@ int get_num_procs(int proces_type)
       break;
   }
 }
+
+int get_num_sens(int proces_type)
+{
+  switch (proces_type) {
+    case LOCOMOTIEF_PROCES:
+      return NUM_LOCO_SENS;
+      break;
+    case WISSEL_PROCES:
+      return NUM_WISSEL_SENS;
+      break;
+    case ONTKOPPEL_PROCES:
+      return NUM_ONTKOPPEL_SENS;
+      break;
+    case SENSOR_PROCES:
+      return NUM_SENSOR_SENS;
+      break;
+    default:
+      return 0;
+      break;
+  }
+}

@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "../includes/wissel.h"
-#include "../includes/alphabet.h"
 #include "../includes/proces.h"
 
 
@@ -12,10 +11,9 @@ void wissel_start(struct exec_data *data)
 {
   const int ALPHABET[] = {RECHT, KROM};
 
-/*  stuur_alphabet(data, ALPHABET, alpha_c);*/
-  while(1)
-  {
-    sleep(1);
+  stuur_alphabet(data, ALPHABET, alpha_c);
+  while(1){
+    sleep(10);
   }
   printf("exiting");
 }

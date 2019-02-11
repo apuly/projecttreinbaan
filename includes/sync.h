@@ -7,7 +7,7 @@
 #define NUM_SENSORS 1
 #define NUM_PROCES_TYPES 4
 
-struct senstivity {
+struct sensitivity {
   int max;
   int cur;
 };
@@ -19,5 +19,6 @@ struct proces_data {
 };
 
 int get_num_procs(int proces_type);
-char initialise(struct proces_data **data);
+int get_num_sens(int proces_type);
+char initialise(struct proces_data ***data, struct sensitivity ****sens);
 #endif

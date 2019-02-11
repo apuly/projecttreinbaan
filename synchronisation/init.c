@@ -19,13 +19,55 @@ _PROTOTYPE( char init_process, (struct proces_data *data, char target_proces,
 _PROTOTYPE( void start_procs, (struct proces_data *data, int num_processes, 
                                    char proces));
 
-char initialise(struct proces_data **data)
+_PROTOTYPE( void init_proces_data, (struct proces_data ***data));
+
+_PROTOTYPE( struct sensitivity ***init_sensitivity, (void));
+char initialise(struct proces_data ***data, struct sensitivity ****sens)
 {
   int i;
+  struct sensitivity ***s;
+  init_proces_data(data);
+  s = init_sensitivity();
+ 
+  /* start processes */
   for (i=0; i<NUM_PROCES_TYPES; i++){
-    printf("starting proces type --%d--\n", i);
-    start_procs(data[i], get_num_procs(i), i);
+    start_procs((*data)[i], get_num_procs(i), i);
   }
+
+  return 0;
+}
+
+void init_proces_data(struct proces_data ***data)
+{
+  int i;
+  int size;
+
+  size = sizeof(struct proces_data *) * NUM_PROCES_TYPES;
+  *data = malloc(size);
+  for (i=0; i<NUM_PROCES_TYPES; i++){
+    size = sizeof(struct proces_data) * get_num_procs(i);
+    (*data)[i] = malloc(size);
+    printf("%d, %d: %x\n", i, get_num_procs(i), (*data)[i]);
+  }
+}
+
+struct sensitivity ***init_sensitivity(void)
+{ 
+  struct sensitivity ***sens;
+  int i, j, num_procs, num_sens, data_size;
+  const int spp = sizeof(struct sensitivity **); /* sensitivity pointer pointer size */
+  const int sp = sizeof(struct sensitivity *); /* sensitivty pointer size */
+  const int s = sizeof(struct sensitivity); /* sensitivity size */
+  sens = malloc(spp * NUM_PROCES_TYPES);
+  for (i=0; i<NUM_PROCES_TYPES; i++){
+    num_procs = get_num_procs(i);
+    sens[i] = malloc(sp * num_procs);
+    for (j=0; j<num_procs; j++){
+      num_sens = get_num_sens(i);
+      sens[i][j] = malloc(s*num_sens);
+    }
+  }
+  return sens;
 }
 
 void start_procs(struct proces_data *data, int num_processes, char proces)
@@ -52,7 +94,6 @@ char init_process(struct proces_data *data, char target_proces, int proces_id)
     printf("Something went wrong while setting up pipes!\n");
     return -1;
   } 
-
   pid = fork();
   if (pid < 0){
     return -1;

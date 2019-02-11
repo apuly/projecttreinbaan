@@ -12,7 +12,7 @@ struct exec_data { /* data for executing tasks */
 };
 
 void stuur_alphabet(struct exec_data *data, int *alpha, const int alpha_c);
-
+void tock(struct exec_data *data);
 void stuur_sensitivity(int *sensitivity, int num_sens);
 int ontvang_actie(void);
 
