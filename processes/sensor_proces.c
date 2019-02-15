@@ -14,7 +14,7 @@ const int ALPHABET[] = {HOOG, LAAG};
 void sensor_start(struct exec_data data)
 {
   stuur_alphabet(&data, ALPHABET, alpha_c);
-  while(1){
+  while(KILL_PROCES){
     sleep(10);
   }
   printf("exiting!");

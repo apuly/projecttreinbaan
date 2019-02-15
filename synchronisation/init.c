@@ -21,13 +21,13 @@ _PROTOTYPE( void start_procs, (struct proces_data *data, int num_processes,
 
 _PROTOTYPE( void init_proces_data, (struct proces_data ***data));
 
-_PROTOTYPE( struct sensitivity ***init_sensitivity, (void));
+_PROTOTYPE( void init_sensitivity, (struct sensitivity ****sens_));
+
 char initialise(struct proces_data ***data, struct sensitivity ****sens)
 {
   int i;
-  struct sensitivity ***s;
   init_proces_data(data);
-  s = init_sensitivity();
+  init_sensitivity(sens);
  
   /* start processes */
   for (i=0; i<NUM_PROCES_TYPES; i++){
@@ -51,23 +51,22 @@ void init_proces_data(struct proces_data ***data)
   }
 }
 
-struct sensitivity ***init_sensitivity(void)
-{ 
-  struct sensitivity ***sens;
-  int i, j, num_procs, num_sens, data_size;
+void init_sensitivity(struct sensitivity ****sens)
+{
+  int i, j, num_sens, num_procs;
   const int spp = sizeof(struct sensitivity **); /* sensitivity pointer pointer size */
   const int sp = sizeof(struct sensitivity *); /* sensitivty pointer size */
   const int s = sizeof(struct sensitivity); /* sensitivity size */
-  sens = malloc(spp * NUM_PROCES_TYPES);
+  printf("sensitivity %x\n", sens);
+  *sens = malloc(spp * NUM_PROCES_TYPES);
   for (i=0; i<NUM_PROCES_TYPES; i++){
     num_procs = get_num_procs(i);
-    sens[i] = malloc(sp * num_procs);
+    (*sens)[i] = malloc(sp * num_procs);
     for (j=0; j<num_procs; j++){
       num_sens = get_num_sens(i);
-      sens[i][j] = malloc(s*num_sens);
+      (*sens)[i][j] = malloc(s*num_sens);
     }
   }
-  return sens;
 }
 
 void start_procs(struct proces_data *data, int num_processes, char proces)

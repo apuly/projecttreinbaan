@@ -13,7 +13,7 @@ void locomotief_start(struct exec_data data)
   const int ALPHABET[] = {SNEL, LANGZAAM, STOP, VOORUIT, ACHTERUIT};
   printf("starting locomotief proces!");
   stuur_alphabet(&data, ALPHABET, alpha_c);
-  while(1){
+  while(KILL_PROCES){
     sleep(10);
   }
   

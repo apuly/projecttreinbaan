@@ -6,6 +6,8 @@
 #define ONTKOPPEL_PROCES 2
 #define SENSOR_PROCES 3
 
+#define KILL_PROCES 1 /* if set to 0, processes will terminate directly after init */
+
 struct exec_data { /* data for executing tasks */
   int read_fd; /* file discriptor to read from parent proces */
   int write_fd; /* file discriptor to write to parent proces */

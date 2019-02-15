@@ -23,6 +23,9 @@ _PROTOTYPE( void start_procs, (struct proces_data *data, int num_processes,
                                    char proces));
 _PROTOTYPE( void read_command, (int fd, int *command, int *param, int *paramc));
 
+_PROTOTYPE( void handle_command, (int proces_id, int system_id, 
+                      int command, int paramc, int *paramv));
+
 _PROTOTYPE( void handle_set_alpha, (int proces_id, int system_id,
                                       int paramc, int *paramv));
 
@@ -73,7 +76,7 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
         if (avail){
 
           read_command(data[i][j].read_fd, &command, param, &paramc);
-          
+          handle_command(i, j, command, paramc, param);          
           printf("cmd: %d, paramc: %d.\n", command, paramc);
         }
       }
@@ -86,12 +89,15 @@ void handle_command(int proces_id, int system_id,
 {
   switch (command){
     case SET_ALPHA:
+      printf("SET_ALPHA\n");
       handle_set_alpha(proces_id, system_id, paramc, paramv);
       break;
     case SET_SENS:
+      printf("SET_SENS\n");
       handle_set_sens(proces_id, system_id, paramc, paramv);
       break;
     case REM_SENS:
+      printf("REM_SENS\n");
       handle_rem_sens(proces_id, system_id, paramc, paramv);
       break;
     default:
@@ -112,10 +118,8 @@ void handle_set_sens(int proces_id, int system_id, int paramc, int *paramv)
       printf("Sensitivity for %d:%d reached. doing stuff!\n", proces_id,
                                                                   system_id);
     }
-  }
-  
+  } 
 }
-
 
 void handle_rem_sens(int proces_id, int system_id, int paramc, int *paramv)
 {
@@ -129,10 +133,11 @@ void handle_rem_sens(int proces_id, int system_id, int paramc, int *paramv)
 void handle_set_alpha(int proces_id, int system_id, int paramc, int *paramv)
 {
   int i, sens_id;
+  printf("trying to set alpha!");
   for (i=0; i<paramc; i++){
     sens_id = paramv[i];
     glob_sens[proces_id][system_id][sens_id].max++;
- }
+  }
 }
 
 
@@ -141,27 +146,15 @@ void handle_set_alpha(int proces_id, int system_id, int paramc, int *paramv)
 
 int main(int argc, char **argv)
 {
-  initialise(&glob_data, &glob_sens);
+  initialise(&glob_data, &glob_sens); 
+  printf("glob_sens: ");
+  printf("%x\n", glob_sens);
   synchronise(&glob_data, &glob_sens);
 }
 #else
 int main(int argc, char **argv)
 {
-  struct proces_data data;
-  int command, param_buff[10], paramc, i;
-  init_process(&data, LOCOMOTIEF_PROCES, 0);
-  printf("executing test main!\n");
-  while(1){
-    if (data_available(&data)){
-      printf("received data from proces!\n");
-      read_command(data.read_fd, &command, param_buff, &paramc);
-      printf("received command %d!\n", command);
-      printf("%d parameters!\n", paramc);
-      for (i=0; i<paramc; i++){
-        printf("%d\t", param_buff[i]);
-      }
-      printf("\n");
-    }  
-  }
+  initialise(&glob_data, &glob_sens);
+  printf("glob_sens: %x\n", glob_sens);
 }
 #endif

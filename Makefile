@@ -12,7 +12,7 @@ OBJECTS = */*.o
 
 $(TARGET): $(SOURCES)
 	$(RM) $@
-	$(CC) -o $@ $(LIBS) $(SOURCES)
+	$(CC) -o $@ $(LIBS) $(CFLAGS)  $(SOURCES)
 
 clean:
 	$(RM) $(OBJECTS)
