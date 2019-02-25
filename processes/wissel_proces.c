@@ -15,4 +15,5 @@ void wissel_start(struct exec_data data)
     sleep(10);
   }
   printf("exiting");
+  exit(0);
 }

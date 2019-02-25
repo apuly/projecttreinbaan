@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include "sensordriver.h"
-
+/*
 int main(int argc, char **argv)
 {
   int num_sensors = 4*16;
@@ -14,4 +14,4 @@ int main(int argc, char **argv)
     printf("\n");
     usleep(1000000);
   }
-}
+}*/

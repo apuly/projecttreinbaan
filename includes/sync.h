@@ -1,7 +1,7 @@
 #ifndef _SYNC_H_
 #define _SUNC_H_
 
-#define NUM_WISSELS 10
+#define NUM_WISSELS 2
 #define NUM_ONTKOPPEL 4
 #define NUM_LOCOMOTIEF 2
 #define NUM_SENSORS 1
@@ -20,5 +20,6 @@ struct proces_data {
 
 int get_num_procs(int proces_type);
 int get_num_sens(int proces_type);
+void print_sens(struct sensitivity ****sens);
 char initialise(struct proces_data ***data, struct sensitivity ****sens);
 #endif

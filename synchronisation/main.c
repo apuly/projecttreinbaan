@@ -76,7 +76,8 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
         if (avail){
 
           read_command(data[i][j].read_fd, &command, param, &paramc);
-          handle_command(i, j, command, paramc, param);          
+          handle_command(i, j, command, paramc, param);
+          /*print_sens(&glob_sens);*/
           printf("cmd: %d, paramc: %d.\n", command, paramc);
         }
       }
@@ -89,15 +90,15 @@ void handle_command(int proces_id, int system_id,
 {
   switch (command){
     case SET_ALPHA:
-      printf("SET_ALPHA\n");
+      printf("%d:%d -SET_ALPHA\n", proces_id, system_id);
       handle_set_alpha(proces_id, system_id, paramc, paramv);
       break;
     case SET_SENS:
-      printf("SET_SENS\n");
+      printf("%d:%d -SET_SENS\n", proces_id, system_id);
       handle_set_sens(proces_id, system_id, paramc, paramv);
       break;
     case REM_SENS:
-      printf("REM_SENS\n");
+      printf("%d:%d -REM_SENS\n", proces_id, system_id);
       handle_rem_sens(proces_id, system_id, paramc, paramv);
       break;
     default:
@@ -109,35 +110,39 @@ void handle_command(int proces_id, int system_id,
 
 void handle_set_sens(int proces_id, int system_id, int paramc, int *paramv)
 {
-  int i, sens_id;
   struct sensitivity sens;
-  for (i=0; i<paramc; i++){
-    sens_id = paramv[i];
-    sens = glob_sens[proces_id][system_id][sens_id];
-    if (++sens.cur == sens.max){
-      printf("Sensitivity for %d:%d reached. doing stuff!\n", proces_id,
-                                                                  system_id);
-    }
-  } 
-}
+  int proc_id, sys_id, sens_id;
+  proc_id = paramv[0];
+  sys_id = paramv[1];
+  sens_id = paramv[2];
+  sens = glob_sens[proc_id][sys_id][sens_id];
+  sens.cur++;
+  if (sens.cur == sens.max){
+    /* send action to hardware specific software */
+  }
+}  
+
 
 void handle_rem_sens(int proces_id, int system_id, int paramc, int *paramv)
 {
-  int i, sens_id;
-  for (i=0; i<paramc; i++){
-    sens_id = paramv[i];
-    glob_sens[proces_id][system_id][sens_id].cur--;
-  }
+  struct sensitivity sens;
+  int proc_id, sys_id, sens_id;
+  proc_id = paramv[0];
+  sys_id = paramv[1];
+  sens_id = paramv[2];
+  sens = glob_sens[proc_id][sys_id][sens_id];
+  sens.cur--;
+
 }
 
 void handle_set_alpha(int proces_id, int system_id, int paramc, int *paramv)
 {
-  int i, sens_id;
-  printf("trying to set alpha!");
-  for (i=0; i<paramc; i++){
-    sens_id = paramv[i];
-    glob_sens[proces_id][system_id][sens_id].max++;
-  }
+  int i, proc_id, sys_id, sens_id;
+  proc_id = paramv[0];
+  sys_id = paramv[1];
+  sens_id = paramv[2];
+  glob_sens[proc_id][sys_id][sens_id].max++;
+ 
 }
 
 

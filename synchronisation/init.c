@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -65,6 +66,7 @@ void init_sensitivity(struct sensitivity ****sens)
     for (j=0; j<num_procs; j++){
       num_sens = get_num_sens(i);
       (*sens)[i][j] = malloc(s*num_sens);
+      memset((*sens)[i][j], 0, s*num_sens);
     }
   }
 }

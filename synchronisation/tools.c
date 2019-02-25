@@ -54,3 +54,26 @@ int get_num_sens(int proces_type)
       break;
   }
 }
+
+void print_sens(struct sensitivity ****sens)
+{
+  #define TOOLS_USE_FOR 
+  int i, j, k, num_proc, num_sens;
+  struct sensitivity s;
+  #ifdef TOOLS_USE_FOR_
+    for (i=0; i<NUM_PROCES_TYPES; i++){
+  #else
+    i = 1;
+  #endif
+    printf("%d\n", i);
+    num_proc = get_num_procs(i);
+    for (j=0; j<num_proc; j++){
+      printf("\t%d\n", j);
+      num_sens = get_num_sens(i);
+      for (k=0; k<num_sens; k++){
+        s = (*sens)[i][j][k];
+        printf("\t\t%d:%d\n", s.cur, s.max);
+      }
+    }
+ }
+

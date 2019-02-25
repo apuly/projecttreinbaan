@@ -6,7 +6,7 @@ CFLAGS = -Wall -Werror
 
 RM = rm -f
 
-SOURCES = */*.c
+SOURCES = */*.c driver/*/*.c
 HEADERS = includes/*.h
 OBJECTS = */*.o
 

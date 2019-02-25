@@ -15,10 +15,12 @@ struct exec_data *data; /*child proces execution data, used for sending alpha*/
 int *alpha; /* the alphabet for the proces */
 const int alpha_c; /* the number of words in the alphabet */
 {
-  int i, cmd = SET_ALPHA;
-  wrt_i(cmd);
-  wrt_i(alpha_c);
-  for(i=0; i<(alpha_c); i++){
+  int i, cmd=SET_ALPHA, args=3;
+  for (i=0; i<alpha_c; i++){
+    wrt_i(cmd);
+    wrt_i(args);
+    wrt_i(data->proces_id);
+    wrt_i(data->system_id);
     wrt_i(alpha[i]);
   }
 }
