@@ -32,7 +32,7 @@ struct exec_data *data; /*child proces execution data, used for sending alpha*/
 int *alpha; /* the alphabet for the proces */
 const int alpha_c; /* the number of words in the alphabet */
 {
-  int i, cmd=SET_ALPHA, args=3;
+  int i, cmd=SET_ALPHA;
   for (i=0; i<alpha_c; i++){
     send_sync_cmd(data, cmd, data->proces_id, data->system_id, alpha[i]);
   }
@@ -43,7 +43,7 @@ struct exec_data *data;
 int *sens;
 const int sens_c;
 {
-  int i, cmd=SET_SENS, args=3;
+  int i, cmd=SET_SENS;
   for (i=0; i<sens_c; i++){
     send_sync_cmd(data, cmd, data->proces_id, data->system_id, sens[i]);
   }
@@ -54,7 +54,7 @@ struct exec_data *data;
 int *sens;
 const int sens_c;
 {
-  int i, cmd=REM_SENS, args=3;
+  int i, cmd=REM_SENS;
   for (i=0; i<sens_c; i++){
     send_sync_cmd(data, cmd, data->proces_id, data->system_id, sens[i]);
   }
@@ -63,20 +63,20 @@ const int sens_c;
 void register_tock(data)
 struct exec_data *data;
 {
-  int i, cmd=SET_ALPHA, args=3, pid=SYSTEM_SENS;
+  int i, cmd=SET_ALPHA, pid=SYSTEM_SENS;
   send_sync_cmd(data, cmd, pid, 0, TOCK);
 }
 
 
 void tock(struct exec_data *data)
 {
-  int cmd = SET_SENS, args=3, pid=SYSTEM_SENS;
+  int cmd = SET_SENS, pid=SYSTEM_SENS;
   send_sync_cmd(data, cmd, pid, 0, TOCK);
 }
 
 
 void untock(struct exec_data *data)
 {
-  int cmd = REM_SENS, args=3, pid=SYSTEM_SENS;
+  int cmd = REM_SENS, pid=SYSTEM_SENS;
   send_sync_cmd(data, cmd, pid, 0, TOCK);
 }
