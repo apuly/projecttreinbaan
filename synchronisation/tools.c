@@ -28,6 +28,9 @@ int get_num_procs(int proces_type)
     case SENSOR_PROCES:
       return NUM_SENSORS;
       break;
+    case SYSTEM_SENS:
+      return NUM_SYSTEM_SENS;
+      break;
     default:
       return 0;
       break;

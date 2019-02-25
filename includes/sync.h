@@ -7,6 +7,10 @@
 #define NUM_SENSORS 1
 #define NUM_PROCES_TYPES 4
 
+#define SYSTEM_SENS NUM_PROCES_TYPES 
+#define NUM_SYSTEM_SENS 1
+#define TOCK 0
+
 struct sensitivity {
   int max;
   int cur;

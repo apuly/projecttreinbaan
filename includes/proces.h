@@ -17,7 +17,11 @@ struct exec_data { /* data for executing tasks */
 
 void stuur_alphabet(struct exec_data *data, int *alpha, const int alpha_c);
 void tock(struct exec_data *data);
+void untock(struct exec_data *data);
+void register_tock(struct exec_data *data);
 void stuur_sensitivity(int *sensitivity, int num_sens);
+void set_sensitivity(struct exec_data *data, int *sens, int sens_c);
+void rem_sensitivity(struct exec_data *data, int *sens, int sens_c);
 int ontvang_actie(void);
 
 
