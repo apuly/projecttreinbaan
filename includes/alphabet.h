@@ -21,6 +21,8 @@
 #define STUUR_SENSITIVITY 18
 #define HOOG_LAAG 19
 #define STUUR_ACTIE 20
+#define HOOG 21
+#define LAAG 22
 
 #define ONTVANG_SENSITIVITY 22
 #endif /*_ALPHABET_H_*/
