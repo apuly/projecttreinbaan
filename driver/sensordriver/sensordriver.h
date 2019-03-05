@@ -12,7 +12,7 @@
 #define NUMBOARDS 4
 #define NUMSENS 16
 
-#define UDPBUFSIZE (sizeof(struct dataHeader) + (sizeof(struct sensorupdate) * NUMBOARDS))
+#define UDPBUFSIZE (sizeof(struct dataHeader) + (sizeof(struct sensorupdate) * NUMBOARDS * NUMSENS))
 #define DATAOFFSET (sizeof(struct dataHeader))
 
 /* data structures */
