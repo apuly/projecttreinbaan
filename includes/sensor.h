@@ -7,7 +7,7 @@
 #define LAAG 1
 #define NUM_SENSOR_SENS 2
 
-void sensor_start(struct exec_data *data);
+void sensor_start(struct exec_data data);
 
 
 #endif

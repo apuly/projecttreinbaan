@@ -7,7 +7,7 @@
 #define KROM 1
 #define NUM_WISSEL_SENS 2
 
-void wissel_start (struct exec_data *data);
+void wissel_start (struct exec_data data);
 
 
 #endif

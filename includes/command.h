@@ -5,5 +5,5 @@
 #define SET_STATE 1 /* sets the state of a proces */
 #define SET_SENS  2 /* sets the senstitivity of a proces in the sync serv */
 #define REM_SENS  3 /* removes a sensitivity of a proces in the sync serv */
-#define TOCK 4 /* sends to sync serv that proces in synchronised */
+#define EXIT      4 /* exit the program */
 #endif /* _COMMAND_H_ */

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -21,13 +22,13 @@ _PROTOTYPE( void start_procs, (struct proces_data *data, int num_processes,
 
 _PROTOTYPE( void init_proces_data, (struct proces_data ***data));
 
-_PROTOTYPE( struct sensitivity ***init_sensitivity, (void));
+_PROTOTYPE( void init_sensitivity, (struct sensitivity ****sens_));
+
 char initialise(struct proces_data ***data, struct sensitivity ****sens)
 {
   int i;
-  struct sensitivity ***s;
   init_proces_data(data);
-  s = init_sensitivity();
+  init_sensitivity(sens);
  
   /* start processes */
   for (i=0; i<NUM_PROCES_TYPES; i++){
@@ -37,6 +38,7 @@ char initialise(struct proces_data ***data, struct sensitivity ****sens)
   return 0;
 }
 
+/*initialise the proces data array */
 void init_proces_data(struct proces_data ***data)
 {
   int i;
@@ -47,27 +49,28 @@ void init_proces_data(struct proces_data ***data)
   for (i=0; i<NUM_PROCES_TYPES; i++){
     size = sizeof(struct proces_data) * get_num_procs(i);
     (*data)[i] = malloc(size);
-    printf("%d, %d: %x\n", i, get_num_procs(i), (*data)[i]);
+    /*printf("%d, %d: %x\n", i, get_num_procs(i), (*data)[i]);*/
   }
 }
 
-struct sensitivity ***init_sensitivity(void)
-{ 
-  struct sensitivity ***sens;
-  int i, j, num_procs, num_sens, data_size;
+/* initialise the sensitivity array */
+void init_sensitivity(struct sensitivity ****sens)
+{
+  int i, j, num_sens, num_procs;
   const int spp = sizeof(struct sensitivity **); /* sensitivity pointer pointer size */
   const int sp = sizeof(struct sensitivity *); /* sensitivty pointer size */
   const int s = sizeof(struct sensitivity); /* sensitivity size */
-  sens = malloc(spp * NUM_PROCES_TYPES);
-  for (i=0; i<NUM_PROCES_TYPES; i++){
+  printf("sensitivity %x\n", sens);
+  *sens = malloc(spp * NUM_PROCES_TYPES);
+  for (i=0; i<NUM_PROCES_TYPES+1; i++){
     num_procs = get_num_procs(i);
-    sens[i] = malloc(sp * num_procs);
+    (*sens)[i] = malloc(sp * num_procs);
     for (j=0; j<num_procs; j++){
       num_sens = get_num_sens(i);
-      sens[i][j] = malloc(s*num_sens);
+      (*sens)[i][j] = malloc(s*num_sens);
+      memset((*sens)[i][j], 0, s*num_sens);
     }
   }
-  return sens;
 }
 
 void start_procs(struct proces_data *data, int num_processes, char proces)
@@ -81,6 +84,10 @@ void start_procs(struct proces_data *data, int num_processes, char proces)
   }
 }
 
+/*forks the proces
+children get an exec_data struct and are turned into appropriate prces
+parent gets relevent data written to proces_data
+*/
 char init_process(struct proces_data *data, char target_proces, int proces_id)
 {
   char s1, s2;
@@ -99,34 +106,36 @@ char init_process(struct proces_data *data, char target_proces, int proces_id)
     return -1;
   } else if (pid == 0){
     /* the child proces */
+    
     close(to_child[1]);
     close(from_child[0]);
     
-    child_data.read_fd = to_child[0];
+    child_data.read_fd = to_child[0]; /*build exec_data struct */
     child_data.write_fd = from_child[1];
+    child_data.proces_id = target_proces;
+    child_data.system_id = proces_id;
 
-    switch (target_proces){
+    switch (target_proces){ /* start proces as appropriate proces type */
       case WISSEL_PROCES:
-        wissel_start(&child_data);
+        wissel_start(child_data);
         break;
       case ONTKOPPEL_PROCES:
-        ontkoppel_start(&child_data);
+        ontkoppel_start(child_data);
         break;
       case LOCOMOTIEF_PROCES:
-        locomotief_start(&child_data);
+        locomotief_start(child_data);
         break;
       case SENSOR_PROCES:
-        sensor_start(&child_data);
+        sensor_start(child_data);
         break;
     }
     exit(0);
   } else {
     close(to_child[0]);
     close(from_child[1]);
-    data->write_fd = to_child[1];
+
+    data->write_fd = to_child[1]; /*build proces_data struct */
     data->read_fd = from_child[0];
-    fstat(data->read_fd, &s);
-    data->last_read = s.st_mtime;
     return 0;
   }
 }

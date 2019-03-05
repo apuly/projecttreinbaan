@@ -11,9 +11,9 @@
 
 #define SOCKADDR struct sockaddr
 
-#include <treinbaan/locomotief.h>
-#include <treinbaan/ontkoppelaar.h>
-#include <treinbaan/wissel.h>
+#include "../../includes/locomotief.h"
+#include "../../includes/ontkoppelaar.h"
+#include "../../includes/wissel.h"
 
 #include "treinbaandriver.h" 
 
@@ -160,7 +160,7 @@ char translate_cmd(char cmd, int type, int system_id, struct cs2_cmd *command)
   switch(type){
     case WISSEL:
       command->cmd = 0x0b;
-      command->param[0] = cmd == WISSEL_RECHT;
+      command->param[0] = cmd == RECHT;
       command->param[1] = 1;
       /* bij param = 0 wordt de wissel op recht gezet
          bij param = 1 wordt de wissel op krom gezet */
@@ -177,25 +177,25 @@ char translate_cmd(char cmd, int type, int system_id, struct cs2_cmd *command)
     case LOCOMOTIEF:
       switch(cmd)
       {
-        case LOCOMOTIEF_STOP:
+        case STOP:
           command->cmd = 0x04;
           command->param[0] = 0;
           break;
-        case LOCOMOTIEF_LANGZAAM:
+        case LANGZAAM:
           command->cmd = 0x04;
           command->param[1] = 80;
           break;
-        case LOCOMOTIEF_SNEL:
+        case SNEL:
           command->cmd = 0x04;
           command->param[0] = 0x01;
           command->param[1] = 0x8F;
           break;
-        case LOCOMOTIEF_VOORUIT:
+        case VOORUIT:
           command->paramc = 1;
           command->cmd = 0x05;
           command->param[0] = 1;
           break;
-        case LOCOMOTIEF_ACHTERUIT:
+        case ACHTERUIT:
           command->paramc = 1;
           command->cmd = 0x05;
           command->param[0] = 2;

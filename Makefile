@@ -6,13 +6,13 @@ CFLAGS = -Wall -Werror
 
 RM = rm -f
 
-SOURCES = */*.c
+SOURCES = */*.c driver/*/*.c
 HEADERS = includes/*.h
 OBJECTS = */*.o
 
 $(TARGET): $(SOURCES)
 	$(RM) $@
-	$(CC) -o $@ $(LIBS) $(SOURCES)
+	$(CC) -o $@ $(LIBS) $(CFLAGS)  $(SOURCES)
 
 clean:
 	$(RM) $(OBJECTS)
