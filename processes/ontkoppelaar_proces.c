@@ -30,7 +30,7 @@ void ontkoppel_start(struct exec_data data)
   curr_len = 1;
   set_sensitivity(data, curr_sens, curr_len);
 
-  while(1){
+  while(KILL_PROCES){
     size = receive_action(data, &cmd, buff); /* receive action from sync serv */
     if (cmd == SET_STATE){ 
       /* if new state of proces, update sensitivity and send to sync serv */

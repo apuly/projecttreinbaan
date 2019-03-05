@@ -31,12 +31,15 @@ void locomotief_start(struct exec_data data)
   curr_len = 2;
   set_sensitivity(data, curr_sens, curr_len);
 
-  while(1)
+  while(KILL_PROCES)
   {
     size = receive_action(data, &cmd, buff); /* receive command from sync serv*/
+    printf("cmd: %d, size: %d\n");
     if (cmd == SET_STATE){
      /*of state of proces has changed, build new sensitivity list and send to 
        sync serv */
+      printf("received set_state command");
+      action = buff[0];
       new_len = loco_change_sens(action, new_sens); 
       curr_len = send_sensitivity(data, curr_sens, curr_len, new_sens, new_len);
     } else if (cmd == EXIT) {

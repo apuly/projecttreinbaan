@@ -47,6 +47,20 @@ char data_available(struct proces_data *data)
   return poll(&p, 1, 0) == 1;
 }
 
+void write_command(int fd, int cmd, int *param, int paramc)
+{
+  int i;
+  write(fd, &cmd, sizeof(int));
+  write(fd, &paramc, sizeof(int));
+  write(fd, param, paramc*sizeof(int));
+}
+
+void send_state(struct proces_data data, int state)
+{
+  int s_ = state;
+  write_command(data.write_fd, SET_STATE, &s_, 1);
+}
+
 /*reads a commando from a proces pipe*/
 void read_command(int fd, int *command, int *param, int *paramc)
 {
@@ -81,7 +95,7 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
           read_command(data[i][j].read_fd, &command, param, &paramc);
           handle_command(i, j, command, paramc, param);
           /*print_sens(&glob_sens);*/
-          printf("cmd: %d, paramc: %d.\n", command, paramc);
+          /*printf("cmd: %d, paramc: %d.\n", command, paramc);*/
         }
       }
     }
@@ -120,14 +134,18 @@ int *paramv; /* pointer to the array of parameters */
 {
   struct sensitivity sens;
   int proc_id, sys_id, sens_id;
+  struct proces_data data;
   proc_id = paramv[0];
   sys_id = paramv[1];
   sens_id = paramv[2];
   sens = glob_sens[proc_id][sys_id][sens_id];
-  sens.cur++;
-  if (sens.cur == sens.max){
+  if (++(sens.cur) == sens.max){
+    data = glob_data[proces_id][system_id];
+    send_state(data, sens_id);
     /* send action to hardware specific software */
   }
+  printf("sens %d:%d:%d adjusted. now %d:%d\n", proc_id, sys_id, sens_id,
+          sens.cur, sens.max);
 }  
 
 /* handle REM_SENS command, removes a sensitivity from the sync serv */
@@ -144,7 +162,7 @@ int *paramv; /* pointer to the array of parameters */
   sys_id = paramv[1];
   sens_id = paramv[2];
   sens = glob_sens[proc_id][sys_id][sens_id];
-  sens.cur--;
+  (sens.cur)--;
 
 }
 
@@ -159,8 +177,9 @@ int i, proc_id, sys_id, sens_id;
   proc_id = paramv[0];
   sys_id = paramv[1];
   sens_id = paramv[2];
-  glob_sens[proc_id][sys_id][sens_id].max++;
- 
+  (glob_sens[proc_id][sys_id][sens_id].max)++;
+  printf("adjusted alphabet for %d:%d:%d, now %d\n", proc_id, sys_id, sens_id,
+    (glob_sens[proc_id][sys_id][sens_id].max));
 }
 
 
@@ -169,9 +188,7 @@ int i, proc_id, sys_id, sens_id;
 
 int main(int argc, char **argv)
 {
-  initialise(&glob_data, &glob_sens); 
-  printf("glob_sens: ");
-  printf("%x\n", glob_sens);
+  initialise(&glob_data, &glob_sens);
   synchronise(&glob_data, &glob_sens);
 }
 #else
