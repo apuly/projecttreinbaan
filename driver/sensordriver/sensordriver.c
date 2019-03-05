@@ -7,118 +7,144 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-#include <treinbaan/sensor.h>
 #include "sensordriver.h"
+#include "linkedlist.h"
 
-int find_board(int sens_id);
-int find_sens(int sens_id);
-unsigned short get_boardval(struct data_struct* data, int board);
-char get_sensval(unsigned short board_val, int bit);
+struct data_pack *parsePacket(char *data);
 
-char get_data(int sens_id){
-    struct data_struct* data;
-    int board;
-    int bit;
-    unsigned short board_val;
-    char state;
+/* a global variable ewww... */
+struct data_pack parsedPackage;
 
-    /* first, get wich sensor we need data from */
-    board = find_board(sens_id);
-    bit = find_sens(sens_id);
-    /* check if the board and sensor in question exist */
-    if(-1 == board){
-        printf("board %d does not exist\n", board);
-        exit(1);
+int main(void)
+{
+    int sock;
+    SensorInit(&sock);
+    while (1)
+    {
+        GetSensorData(&sock);
+        
+        printlist(parsedPackage.listhead);
+        
+        parsedPackage.listhead = clearlist(parsedPackage.listhead);
     }
-    if(-1 == bit){
-        printf("pin %d does not exist\n", bit);
-        exit(1);
-    }
-
-    /* then read the data */
-    data = GetSensorData();
-
-    /* lastly return the value of the sensor */
-    board_val = get_boardval(data, board);
-    state = get_sensval(board_val, bit);
-
-    return state;
 }
 
-struct data_struct* GetSensorData(void){
+int SensorInit(int *sock)
+{
+    int status;
+    /* set the head of the linked list to NULL */
+    parsedPackage.listhead = NULL;
+
+    status = OpenSensorSock(sock);
+    return status;
+}
+
+/* open socket, and send hello message, returns 0 if succeded 1 if failed */
+int OpenSensorSock(int *sock)
+{
     /*reserve variables*/
-    int sock, valread; 
-    struct sockaddr_in serv_addr; 
-    char Request[] = "GET plz"; 
-    static struct data_struct incommingData;
+    struct sockaddr_in serv_addr;
+    char Request[] = "GET plz";
 
     /* create the socket */
-    sock = 0;
-    if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
-    { 
-        printf("\n Socket creation error \n"); 
-        exit(-1); 
-    } 
-   
-    memset(&serv_addr, '0', sizeof(serv_addr)); 
-   
-    serv_addr.sin_family = AF_INET; 
-    serv_addr.sin_port = htons(PORT); 
-       
+    *sock = 0;
+    if ((*sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+        printf("\n Socket creation error \n");
+        return 1;
+    }
+
+    memset(&serv_addr, '0', sizeof(serv_addr));
+
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(PORT);
+
     /* Convert IPv4 and IPv6 addresses from text to binary form */
-    if(inet_pton(AF_INET, IP, &serv_addr.sin_addr)<=0)  
-    { 
-        printf("\nInvalid address/ Address not supported \n"); 
-        exit(-1); 
-    } 
-    
+    if (inet_pton(AF_INET, IP, &serv_addr.sin_addr) <= 0)
+    {
+        printf("\nInvalid address/ Address not supported \n");
+        return 2;
+    }
+
     /* connect to the sensor subsystem */
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
-    { 
-        printf("\nConnection Failed \n"); 
-        exit(-1); 
-    } 
+    if (connect(*sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+        printf("\nConnection Failed \n");
+        return 3;
+    }
 
     /* after we have connected, send a get request */
-    send(sock , Request , strlen(Request) , 0 ); 
-    /*printf("Data request message sent\n"); */
-    /* wait for, and then read the incomming datagram containint the sensordata */
-    valread = read( sock , &incommingData, sizeof(incommingData)); 
-    /*printf("%d bytes read \n", valread);*/
-    
-    return &incommingData; 
-} 
+    send(*sock, Request, strlen(Request), 0);
 
-int find_board(int sens_id){
-    int board;
-    board = sens_id / NUMSENS;
-    if(board < NUMBOARDS){
-        return board;
-    }else{
-        return -1;
+    return 0;
+}
+
+/* wait for a sensordata message to appear on the socket, returns data_pack structure */
+struct data_pack *GetSensorData(int *sock)
+{
+    /* reserve some variables */
+    int valread;
+    char udp_buffer[UDPBUFSIZE];
+
+    /* make sure the buffer is clear */
+    memset(udp_buffer, 0, UDPBUFSIZE);
+
+    /* wait for data to come in */
+    valread = read(*sock, &udp_buffer, UDPBUFSIZE);
+
+    if (valread == 0)
+    {
+        /*this function is blocking. so if there is no data, the probram will wait here*/
+        return 0;
+    }
+    else
+    {
+        /* parse the data */
+        return parsePacket(udp_buffer);
     }
 }
 
-int find_sens(int sens_id){
-    int sensor;
-    sensor = sens_id % NUMSENS;
-    if(sensor < NUMSENS){
-        return sensor;
-    }else{
-        return -1;
+/* closes communication with the sensor subsystem */
+int CloseSensorSock(int *sock)
+{
+    return 0;
+}
+
+struct data_pack *parsePacket(char *data)
+{
+    struct sensorupdate *sensorPointer;
+    struct sensorupdate tmpSensor;
+    int noUpdates;
+    int index = 0;
+    /* make sure the list is clear */
+    if (NULL != parsedPackage.listhead)
+    {
+        parsedPackage.listhead = clearlist(parsedPackage.listhead);
     }
+    /* get the ammount of updates */
+    noUpdates = ((struct dataHeader *)data)->size;
+    /* set the list pointer to the start of the lisitems */
+    sensorPointer = (struct sensorupdate *)(data + DATAOFFSET);
+
+    /* walk through the databuffer, and create the list */
+    for (index = 0; index < noUpdates; index++)
+    {
+        tmpSensor = sensorPointer[index];
+        parsedPackage.listhead = addItem(parsedPackage.listhead, tmpSensor);
+    }
+
+    return &parsedPackage;
 }
 
-unsigned short get_boardval(struct data_struct* data, int board){
-    return data->dataBuf[board];
-}
-
-char get_sensval(unsigned short board_val, int bit){
-    /* we need to get the n'th bit */
-    unsigned short shiftedval;
-
-    /* shift the bit we have to read to the rightmost possition */
-    shiftedval = board_val >> bit;
-    /* then and it with 1 to get the state of the shifted value */
-    return (char)(shiftedval & 1);
+void printlist(struct listItem* head){
+    int count;
+    int i;
+    count = countItems(head);
+        printf("item count: %d\n", count);
+        for (i = 0; i < count; i++)
+        {
+            struct sensorupdate TMPSENS = getItem(head, i);
+            printf("Sensor Number: %d\n sensor state: %d\n", TMPSENS.sensor, TMPSENS.state);
+            fflush(stdout);
+        }
 }

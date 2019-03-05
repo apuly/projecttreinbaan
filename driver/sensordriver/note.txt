@@ -1,0 +1,4 @@
+the close socked function is not implemented yet,
+however, when closing the program the socket should close on its own
+the linked list should also be already freed when the data has been used
+
