@@ -50,7 +50,7 @@ int OpenSensorSock(int *sock)
     *sock = 0;
     if ((*sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        printf("\n Socket creation error \n");
+        perror("socket creaton error");
         return 1;
     }
 
@@ -62,14 +62,14 @@ int OpenSensorSock(int *sock)
     /* Convert IPv4 and IPv6 addresses from text to binary form */
     if (inet_pton(AF_INET, IP, &serv_addr.sin_addr) <= 0)
     {
-        printf("\nInvalid address/ Address not supported \n");
+        perror("invallid adress");
         return 2;
     }
 
     /* connect to the sensor subsystem */
     if (connect(*sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-        printf("\nConnection Failed \n");
+        perror("socket connection error");
         return 3;
     }
 
@@ -140,11 +140,11 @@ void printlist(struct listItem* head){
     int count;
     int i;
     count = countItems(head);
-        printf("item count: %d\n", count);
+
         for (i = 0; i < count; i++)
         {
             struct sensorupdate TMPSENS = getItem(head, i);
-            printf("Sensor Number: %d\n sensor state: %d\n", TMPSENS.sensor, TMPSENS.state);
-            fflush(stdout);
+            write(1,&TMPSENS,sizeof(struct sensorupdate));
+          /*  write(1,&TMPSENS.state,sizeof(TMPSENS.state));*/
         }
 }
