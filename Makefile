@@ -11,7 +11,6 @@ HEADERS = includes/*.h
 OBJECTS = */*.o
 
 $(TARGET): $(SOURCES)
-	$(RM) $@
 	$(CC) -o $@ $(LIBS) $(CFLAGS)  $(SOURCES)
 
 clean:

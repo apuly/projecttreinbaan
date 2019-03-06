@@ -108,15 +108,21 @@ void handle_command(int proces_id, int system_id,
 {
   switch (command){
     case SET_ALPHA:
+      #if DEBUG_SYNC
       printf("%d:%d -SET_ALPHA\n", proces_id, system_id);
+      #endif
       handle_set_alpha(proces_id, system_id, paramc, paramv);
       break;
     case SET_SENS:
+      #if DEBUG_SYNC
       printf("%d:%d -SET_SENS\n", proces_id, system_id);
+      #endif
       handle_set_sens(proces_id, system_id, paramc, paramv);
       break;
     case REM_SENS:
+      #if DEBUG_SYNC
       printf("%d:%d -REM_SENS\n", proces_id, system_id);
+      #endif
       handle_rem_sens(proces_id, system_id, paramc, paramv);
       break;
     default:
@@ -144,8 +150,10 @@ int *paramv; /* pointer to the array of parameters */
     send_state(data, sens_id);
     /* send action to hardware specific software */
   }
+  #if DEBUG_SYNC
   printf("sens %d:%d:%d adjusted. now %d:%d\n", proc_id, sys_id, sens_id,
           sens.cur, sens.max);
+  #endif
 }  
 
 /* handle REM_SENS command, removes a sensitivity from the sync serv */
@@ -178,8 +186,10 @@ int i, proc_id, sys_id, sens_id;
   sys_id = paramv[1];
   sens_id = paramv[2];
   (glob_sens[proc_id][sys_id][sens_id].max)++;
+  #if DEBUG_SYNC
   printf("adjusted alphabet for %d:%d:%d, now %d\n", proc_id, sys_id, sens_id,
     (glob_sens[proc_id][sys_id][sens_id].max));
+  #endif
 }
 
 

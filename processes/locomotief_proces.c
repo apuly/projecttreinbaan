@@ -5,6 +5,8 @@
 #include "../includes/locomotief.h"
 #include "../includes/proces.h"
 #include "../includes/command.h"
+#include "../includes/debug.h"
+
 
 #define alpha_c (sizeof(ALPHABET) / sizeof(int))
 
@@ -34,11 +36,15 @@ void locomotief_start(struct exec_data data)
   while(KILL_PROCES)
   {
     size = receive_action(data, &cmd, buff); /* receive command from sync serv*/
+    #if DEBUG_LOCO
     printf("cmd: %d, size: %d\n");
+    #endif
     if (cmd == SET_STATE){
      /*of state of proces has changed, build new sensitivity list and send to 
        sync serv */
+      #if DEBUG_LOCO
       printf("received set_state command");
+      #endif
       action = buff[0];
       new_len = loco_change_sens(action, new_sens); 
       curr_len = send_sensitivity(data, curr_sens, curr_len, new_sens, new_len);
