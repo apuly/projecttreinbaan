@@ -58,8 +58,11 @@ int main(int argc, char *argv[], char *env[])
             printf("dup failed...\n");
         }
         /* replace child process with the driver */
-        execve("./test.exe", NULL, NULL);
-
+        error = execve("a.out", argv, env);
+        
+        if(error == -1){
+          printf("execve returned -1\n");
+        }
         /* if this code gets to run, that means the execve failed */
         printf("execve failed :(\n");
         exit(2);
@@ -70,12 +73,12 @@ int main(int argc, char *argv[], char *env[])
         close(driverPipe[1]);
 
         /* set the recieving end to nonblocking */
-/*        error = fcntl(driverPipe[0], F_SETFL, O_NONBLOCK);
+        error = fcntl(driverPipe[0], F_SETFL, O_NONBLOCK);
         if(error == -1)
         {
           printf("failed to set read end to nonblock");
         }
-*/
+
         sensor_event_start(/*sync_pipe,*/ driverPipe[0]);
     }
     exit(0);
@@ -100,22 +103,31 @@ void sensor_event_start(/*int sync_pipe,*/ int driver_pipe)
 
 char *read_driver(int driver_pipe)
 {
+    struct sensorupdate TMPelement;
     int16_t val;
     int nread;
 
-    nread = read(driver_pipe, &val, sizeof(int16_t));
-    printf("number of bytes read: %d\n", nread);
-    if (nread == -1)
-    {
-        perror("error on read from pipe");
-        exit(3);
-    }
-    if (nread)
-    {
+    nread = read(driver_pipe, &TMPelement, sizeof(struct sensorupdate));
+/*    printf("number of bytes read: %d\n", nread);*/
+    switch(nread){
+    case -1:
+        if(errno == EAGAIN){
+          /*if this piece of code gets hit, then there is no data on the pipe and no action has to be taken */
+        }else{
+          perror("error on read from pipe");
+          exit(3);
+        }
+        break;
+    case 0:
+      printf("eof reached\n");
+      break;
+    default:
       printf("recieved from pipe:\n");
-      printf("Sensor Number: %hd\n", val);
+ /*     printf("Sensor Number: %hd\n", val);
       read(driver_pipe, &val, sizeof(int16_t));
       printf("sensor state: %hd\n", val);
+  */
+      printf("Sensor Number: %hd\n Sensor State: %hd\n", TMPelement.sensor, TMPelement.state);
     }
 }
 

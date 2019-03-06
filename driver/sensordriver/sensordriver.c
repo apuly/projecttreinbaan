@@ -22,9 +22,9 @@ int main(void)
     while (1)
     {
         GetSensorData(&sock);
-        
+
         printlist(parsedPackage.listhead);
-        
+
         parsedPackage.listhead = clearlist(parsedPackage.listhead);
     }
 }
