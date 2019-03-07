@@ -31,6 +31,9 @@ int get_num_procs(int proces_type)
     case SYSTEM_SENS:
       return NUM_SYSTEM_SENS;
       break;
+    case HDS_SENSOR:
+      return NUM_HDS_SENSOR;
+      break;
     default:
       return 0;
       break;
@@ -50,6 +53,9 @@ int get_num_sens(int proces_type)
       return NUM_ONTKOPPEL_SENS;
       break;
     case SENSOR_PROCES:
+      return NUM_SENSOR_SENS;
+      break;
+    case HDS_SENSOR:
       return NUM_SENSOR_SENS;
       break;
     default:

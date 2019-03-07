@@ -40,6 +40,8 @@ void setup_sensorsub(struct exec_data data)
 
     char minibuf[100];
 
+    printf("sensor subsystem started\n");
+
     /* open up a pipe */
     error = pipe(driverPipe);
     if (error == -1)

@@ -5,6 +5,7 @@
 #define ONTKOPPEL_PROCES 1
 #define LOCOMOTIEF_PROCES 2
 #define SENSOR_PROCES 3
+#define HDS_SENSOR 4
 
 #define KILL_PROCES 1 /* if set to 0, processes will terminate directly after init */
 

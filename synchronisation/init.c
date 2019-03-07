@@ -62,7 +62,7 @@ void init_sensitivity(struct sensitivity ****sens)
   const int s = sizeof(struct sensitivity); /* sensitivity size */
   printf("sensitivity %x\n", sens);
   *sens = malloc(spp * NUM_PROCES_TYPES);
-  for (i=0; i<NUM_PROCES_TYPES+1; i++){
+  for (i=0; i<NUM_PROCES_TYPES; i++){
     num_procs = get_num_procs(i);
     (*sens)[i] = malloc(sp * num_procs);
     for (j=0; j<num_procs; j++){
@@ -128,6 +128,11 @@ char init_process(struct proces_data *data, char target_proces, int proces_id)
       case SENSOR_PROCES:
         sensor_start(child_data);
         break;
+      case HDS_SENSOR:
+        setup_sensorsub(child_data);
+        break;
+      default:
+        printf("target_proces: %d not found\n", target_proces);
     }
     exit(0);
   } else {
