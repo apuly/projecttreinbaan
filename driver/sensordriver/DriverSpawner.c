@@ -16,14 +16,22 @@ then either this program wil execve into the event handler program, or it will j
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
+
 #include "linkedlist.h"
+
+#include "../../includes/proces.h"
+#include "../../includes/command.h"
+#include "../../includes/debug.h"
 
 void sensor_event_start(/*int sync_pipe,*/ int driver_pipe);
 
 char *read_driver(int driver_pipe);
 
-
+#ifdef standaloneSensor
 int main(int argc, char *argv[], char *env[])
+#else
+void setup_sensorsub(struct exec_data data)
+#endif
 {
     /* variables */
     int driverPipe[2];
@@ -49,6 +57,7 @@ int main(int argc, char *argv[], char *env[])
 
     if (pid == 0)
     { /*child process*/
+        char * noarg[] = {NULL};
         /* closes output side of the pipe */
         close(driverPipe[0]);
         /* redirect stdout to pipe */
@@ -58,7 +67,7 @@ int main(int argc, char *argv[], char *env[])
             printf("dup failed...\n");
         }
         /* replace child process with the driver */
-        error = execve("a.out", argv, env);
+        error = execve("a.out", noarg, noarg);
         
         if(error == -1){
           printf("execve returned -1\n");
