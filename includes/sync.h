@@ -11,6 +11,8 @@
 #define NUM_SYSTEM_SENS 1
 #define TOCK 0
 
+#define HDS_PROC SYSTEM_SENS /*index is shared with SYSTEM_SENS */
+
 struct sensitivity {
   int max;
   int cur;

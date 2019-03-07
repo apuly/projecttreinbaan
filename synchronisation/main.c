@@ -55,10 +55,14 @@ void write_command(int fd, int cmd, int *param, int paramc)
   write(fd, param, paramc*sizeof(int));
 }
 
-void send_state(struct proces_data data, int state)
+void send_state(struct proces_data data, int proc_id, int sys_id, int state)
 {
-  int s_ = state;
+  int buff[4], s_ = state;
   write_command(data.write_fd, SET_STATE, &s_, 1);
+  buff[0] = proc_id;
+  buff[1] = sys_id;
+  buff[2] = state;
+  write_command(glob_data[HDS_PROC][0].write_fd, HDS_ACTION, buff, 3);
 }
 
 /*reads a commando from a proces pipe*/
@@ -147,7 +151,7 @@ int *paramv; /* pointer to the array of parameters */
   sens = glob_sens[proc_id][sys_id][sens_id];
   if (++(sens.cur) == sens.max){
     data = glob_data[proces_id][system_id];
-    send_state(data, sens_id);
+    send_state(data, proc_id, sys_id, sens_id);
     /* send action to hardware specific software */
   }
   #if DEBUG_SYNC

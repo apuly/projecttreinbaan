@@ -1,9 +1,9 @@
 #ifndef _TREINBAAN_PROCES_H_
 #define _TREINBAAN_PROCES_H_
 
-#define LOCOMOTIEF_PROCES 0
-#define WISSEL_PROCES 1
-#define ONTKOPPEL_PROCES 2
+#define WISSEL_PROCES 0
+#define ONTKOPPEL_PROCES 1
+#define LOCOMOTIEF_PROCES 2
 #define SENSOR_PROCES 3
 
 #define KILL_PROCES 1 /* if set to 0, processes will terminate directly after init */
