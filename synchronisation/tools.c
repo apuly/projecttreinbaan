@@ -60,10 +60,10 @@ int get_num_sens(int proces_type)
 
 void print_sens(struct sensitivity ****sens)
 {
-  #define TOOLS_USE_FOR 
+  #define TOOLS_USE_FOR_ 
   int i, j, k, num_proc, num_sens;
   struct sensitivity s;
-  #ifdef TOOLS_USE_FOR_
+  #ifdef TOOLS_USE_FOR
     for (i=0; i<NUM_PROCES_TYPES; i++){
   #else
     i = 1;
@@ -78,5 +78,8 @@ void print_sens(struct sensitivity ****sens)
         printf("\t\t%d:%d\n", s.cur, s.max);
       }
     }
- }
+  #ifdef TOOLS_USE_FOR
+  }
+  #endif
+}
 

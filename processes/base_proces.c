@@ -114,7 +114,9 @@ int *buff; /* buffer where the command parameters will be written to */
   /*return the size of the param buffer*/
   int len;
   read(data.read_fd, cmd, sizeof(int));
+  printf("cmd: %d;", *cmd);
   read(data.read_fd, &len, sizeof(int));
+  printf("len: %d\n", len);
   read(data.read_fd, buff, len*sizeof(int));
   return len;
 }
