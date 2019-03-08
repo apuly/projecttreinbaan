@@ -15,3 +15,8 @@ $(TARGET): $(SOURCES)
 
 clean:
 	$(RM) $(OBJECTS)
+
+        
+sensdriver:
+	cc -o sensdriver -Wall -Werror driver/sensordriver/linkedlist.c driver/sensordriver/sensordriver.c
+

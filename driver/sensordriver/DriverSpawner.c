@@ -71,7 +71,7 @@ void setup_sensorsub(struct exec_data data)
             perror("Sensor Hds: dup failed...");
         }
         /* replace child process with the driver */
-        error = execve("a.out", noarg, noarg);
+        error = execve("sensdriver", noarg, noarg);
         
         if(error == -1){
           perror("Sensor Hds: execve failed");
@@ -132,7 +132,8 @@ char *read_driver(int driver_pipe)
         break;
     case 0:
     #if DEBUG_HDS_SENSOR
-      printf("eof reached\n");
+      printf("Sensor Hds: eof reached\nShutting down Sensor Hds");
+      exit(1);
     #endif
       break;
     default:
