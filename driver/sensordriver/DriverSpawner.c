@@ -27,7 +27,9 @@ void sensor_event_start(/*int sync_pipe,*/ int driver_pipe);
 
 char *read_driver(int driver_pipe);
 
-#ifdef standaloneSensor
+#define standaloneSensor 0 
+
+#if standaloneSensor
 int main(int argc, char *argv[], char *env[])
 #else
 void setup_sensorsub(struct exec_data data)
@@ -46,14 +48,14 @@ void setup_sensorsub(struct exec_data data)
     error = pipe(driverPipe);
     if (error == -1)
     {
-        printf("error on pipe creation\n");
+        perror("Sensor Hds: error on pipe creation");
         exit(1);
     }
 
     pid = fork();
     if (pid == -1)
     {
-        printf("error on fork\n");
+        perror("Sensor Hds: error on fork");
         exit(1);
     }
 
@@ -66,13 +68,13 @@ void setup_sensorsub(struct exec_data data)
         error = dup2(driverPipe[1], 1);
         if (error == -1)
         {
-            printf("dup failed...\n");
+            perror("Sensor Hds: dup failed...");
         }
         /* replace child process with the driver */
         error = execve("a.out", noarg, noarg);
         
         if(error == -1){
-          printf("execve returned -1\n");
+          perror("Sensor Hds: execve failed");
         }
         /* if this code gets to run, that means the execve failed */
         printf("execve failed :(\n");
@@ -87,7 +89,7 @@ void setup_sensorsub(struct exec_data data)
         error = fcntl(driverPipe[0], F_SETFL, O_NONBLOCK);
         if(error == -1)
         {
-          printf("failed to set read end to nonblock");
+          perror("Sensor Hds Driver: failed to set read end to nonblock");
         }
 
         sensor_event_start(/*sync_pipe,*/ driverPipe[0]);
@@ -115,7 +117,6 @@ void sensor_event_start(/*int sync_pipe,*/ int driver_pipe)
 char *read_driver(int driver_pipe)
 {
     struct sensorupdate TMPelement;
-    int16_t val;
     int nread;
 
     nread = read(driver_pipe, &TMPelement, sizeof(struct sensorupdate));
@@ -125,20 +126,21 @@ char *read_driver(int driver_pipe)
         if(errno == EAGAIN){
           /*if this piece of code gets hit, then there is no data on the pipe and no action has to be taken */
         }else{
-          perror("error on read from pipe");
+          perror("Sensor Hds: error on read from pipe");
           exit(3);
         }
         break;
     case 0:
+    #if DEBUG_HDS_SENSOR
       printf("eof reached\n");
+    #endif
       break;
     default:
+    #if DEBUG_HDS_SENSOR
       printf("recieved from pipe:\n");
- /*     printf("Sensor Number: %hd\n", val);
-      read(driver_pipe, &val, sizeof(int16_t));
-      printf("sensor state: %hd\n", val);
-  */
       printf("Sensor Number: %hd\n Sensor State: %hd\n", TMPelement.sensor, TMPelement.state);
+    #endif
+      break;
     }
 }
 
