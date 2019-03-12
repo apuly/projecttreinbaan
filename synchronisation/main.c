@@ -62,9 +62,8 @@ void send_state(struct proces_data data, int proc_id, int sys_id, int state)
   buff[0] = proc_id;
   buff[1] = sys_id;
   buff[2] = state;
-  write_command(glob_data[HDS_PROC][0].write_fd, HDS_ACTION, buff, 3);
+  write_command(glob_data[HDS_TREIN][0].write_fd, HDS_ACTION, buff, 3);
 }
-
 /*reads a commando from a proces pipe*/
 void read_command(int fd, int *command, int *param, int *paramc)
 {

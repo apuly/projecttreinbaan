@@ -7,7 +7,7 @@
 
 void exec_treinbaan(int proc_id, int sys_id, int sens_id);
 
-void start_treinbaan(struct exec_data data)
+void treinbaan_start(struct exec_data data)
 {
   int size, cmd, buff[10], proc_id, sys_id, sens_id;
   while (1){

@@ -22,6 +22,7 @@ then either this program wil execve into the event handler program, or it will j
 #include "../../includes/proces.h"
 #include "../../includes/command.h"
 #include "../../includes/debug.h"
+#include "../../includes/sensor_driver.h"
 
 void sensor_event_start(/*int sync_pipe,*/ int driver_pipe);
 
