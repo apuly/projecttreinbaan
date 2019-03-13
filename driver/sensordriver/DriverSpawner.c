@@ -24,6 +24,7 @@
 #include "../../includes/proces.h"
 #include "../../includes/command.h"
 #include "../../includes/debug.h"
+#include "../../includes/sensor_driver.h"
 
 
 struct sensorupdate* read_driver(int driver_pipe);

@@ -37,7 +37,6 @@ _PROTOTYPE( void handle_rem_sens, (int proces_id, int system_id,
 
 struct sensitivity ***glob_sens; /* list of current proces sensitivities */
 struct proces_data **glob_data; /* list of proces data needed for execution*/
-
 /* polls proces to see if data has been written to its pipe */
 char data_available(struct proces_data *data)
 {
@@ -57,14 +56,13 @@ void write_command(int fd, int cmd, int *param, int paramc)
 
 void send_state(struct proces_data data, int proc_id, int sys_id, int state)
 {
-  int buff[4], s_ = state;
+  int buff_[4], s_ = state;
   write_command(data.write_fd, SET_STATE, &s_, 1);
-  buff[0] = proc_id;
-  buff[1] = sys_id;
-  buff[2] = state;
-  write_command(glob_data[HDS_PROC][0].write_fd, HDS_ACTION, buff, 3);
+  buff_[0] = proc_id;
+  buff_[1] = sys_id;
+  buff_[2] = state;
+  write_command(glob_data[HDS_TREIN][0].write_fd, HDS_ACTION, buff_, 3);
 }
-
 /*reads a commando from a proces pipe*/
 void read_command(int fd, int *command, int *param, int *paramc)
 {
@@ -93,9 +91,9 @@ void synchronise(struct proces_data ***data_, struct sensitivity ****sens_)
     for(i=0; i<NUM_PROCES_TYPES; i++){
       num_procs = get_num_procs(i);
       for(j=0; j<num_procs; j++){
+        /*printf("%d:%d\n", i, j);*/
         avail = data_available(&(data[i][j]));
         if (avail){
-
           read_command(data[i][j].read_fd, &command, param, &paramc);
           handle_command(i, j, command, paramc, param);
           /*print_sens(&glob_sens);*/
@@ -142,21 +140,22 @@ int system_id; /* system_id of the source of the command */
 int paramc; /* the number of parameters in the command */
 int *paramv; /* pointer to the array of parameters */
 {
-  struct sensitivity sens;
+  struct sensitivity *sens;
   int proc_id, sys_id, sens_id;
   struct proces_data data;
   proc_id = paramv[0];
   sys_id = paramv[1];
   sens_id = paramv[2];
-  sens = glob_sens[proc_id][sys_id][sens_id];
-  if (++(sens.cur) == sens.max){
-    data = glob_data[proces_id][system_id];
+  sens = &(glob_sens[proc_id][sys_id][sens_id]);
+  sens->cur++;
+  if (sens->cur == sens->max){
+    data = glob_data[proc_id][sys_id];
     send_state(data, proc_id, sys_id, sens_id);
     /* send action to hardware specific software */
   }
   #if DEBUG_SYNC
   printf("sens %d:%d:%d adjusted. now %d:%d\n", proc_id, sys_id, sens_id,
-          sens.cur, sens.max);
+          sens->cur, sens->max);
   #endif
 }  
 
@@ -168,13 +167,17 @@ int paramc; /* the number of parameters in the command */
 int *paramv; /* pointer to the array of parameters */
 {
 
-  struct sensitivity sens;
+  struct sensitivity *sens;
   int proc_id, sys_id, sens_id;
   proc_id = paramv[0];
   sys_id = paramv[1];
   sens_id = paramv[2];
-  sens = glob_sens[proc_id][sys_id][sens_id];
-  (sens.cur)--;
+  sens = &(glob_sens[proc_id][sys_id][sens_id]);
+  sens->cur--;
+  #if DEBUG_SYNC
+  printf("sens %d:%d:%d adjusted. now %d:%d\n", proc_id, sys_id, sens_id,
+          sens->cur, sens->max);
+  #endif
 
 }
 

@@ -26,7 +26,7 @@ void locomotief_start(struct exec_data data)
 
   /*send the alphabet to the synchronisation server */
   send_alphabet(data, LOCOMOTIEF_PROCES, data.system_id, ALPHABET, alpha_c);
-
+  sleep(START_PROCES_WAIT_TIME);
   /* send initial sensitivities to synchronisation server */
   curr_sens[0] = VOORUIT;
   curr_sens[1] = ACHTERUIT;

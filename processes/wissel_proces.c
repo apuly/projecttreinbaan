@@ -22,13 +22,13 @@ void wissel_start(struct exec_data data)
 
   /* send proces alphabet to sync serv */
   send_alphabet(data, WISSEL_PROCES, data.system_id, ALPHABET, alpha_c);
-  
+  sleep(START_PROCES_WAIT_TIME); 
   /* set inital sensitivities and send to sync serv */
   curr_sens[0] = KROM;
   curr_len = 1;
   set_sensitivity(data, curr_sens, curr_len);
 
-  while(KILL_PROCES)
+  while(1)
   {
     size = receive_action(data, &cmd, buff); /* receive action from sync serv */
     if (cmd == SET_STATE){
