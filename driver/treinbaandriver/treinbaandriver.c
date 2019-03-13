@@ -63,18 +63,17 @@ void send_cmd(int type, char cmd, int system_id)
   char buff[8]; /* 8 is max length for can bus command */
   size_t buff_len;
   char status;
-  struct cs2_cmd *command;
+  struct cs2_cmd command;
   unsigned long ip;
   long cs2_id = translate_id(type, system_id);
-  
-  status = translate_cmd(cmd, type, system_id, command);
+  status = translate_cmd(cmd, type, system_id, &command);
   if(status != 0){
     return;
   }
   ip = lookup_target_ip(system_id);
   /*printf("cmd: %d, p0: %d, p1: %d, p2: %d, paramc: %d\n", command->cmd, command->param[0], command->param[1], command->param[2], command->paramc);*/
-  buff_len = format_cmd_data(cs2_id, command->param, command->paramc, buff);
-  send_can_msg(ip, command->cmd, buff, buff_len);
+  buff_len = format_cmd_data(cs2_id, command.param, command.paramc, buff);
+  send_can_msg(ip, command.cmd, buff, buff_len);
 }
 
 int format_cmd_data(long addr, char *data, size_t data_len, char *buff)

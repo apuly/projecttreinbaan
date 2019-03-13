@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../includes/debug.h"
 #include "../includes/command.h"
 #include "../includes/proces.h"
 #include "../driver/treinbaandriver/treinbaandriver.h"
@@ -16,7 +17,10 @@ void treinbaan_start(struct exec_data data)
       proc_id = buff[0];
       sys_id = buff[1];
       sens_id = buff[2];
-      exec_treinbaan(proc_id, sys_id, sens_id);
+      if (proc_id == ONTKOPPEL_PROCES || proc_id == LOCOMOTIEF_PROCES ||
+          proc_id == WISSEL_PROCES){
+        exec_treinbaan(proc_id, sys_id, sens_id);
+      }
     } else if (cmd == EXIT) {
       exit(0);
     }
@@ -25,5 +29,8 @@ void treinbaan_start(struct exec_data data)
 
 void exec_treinbaan(int proc_id, int sys_id, int sens_id)
 {
-  send_cmd(proc_id, (char)sens_id, sys_id);
+  #if DEBUG_TREINBAAN
+  printf("treinbaan: %d:%d:%d\n", proc_id, sys_id, sens_id);
+  #endif
+  send_cmd(proc_id, (char)(sens_id&0xff), sys_id);
 }

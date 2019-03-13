@@ -13,6 +13,7 @@
 #include "../includes/proces.h"
 #include "../includes/sync.h"
 #include "../includes/hds.h"
+#include "../includes/rangeer.h"
 
 int get_num_procs(int proces_type)
 {
@@ -34,6 +35,9 @@ int get_num_procs(int proces_type)
       break;
     case HDS_TREIN:
       return NUM_HDS_TREIN;
+      break;
+    case RANGEER_PROCES:
+      return NUM_RANGEER;
       break;
     default:
       return 0;
@@ -64,6 +68,9 @@ int get_num_sens(int proces_type)
       break;
     case SYSTEM_SENS:
       return NUM_SYSTEM_SENS;
+      break;
+    case RANGEER_PROCES:
+      return NUM_RANGEER_SENS;
       break;
     default:
       return 0;

@@ -15,6 +15,7 @@
 #include "../includes/sync.h"
 #include "../includes/sensor_driver.h"
 #include "../includes/trein_driver.h"
+#include "../includes/rangeer.h"
 
 _PROTOTYPE( char init_process, (struct proces_data *data, char target_proces, 
                                   int proces_id));
@@ -29,6 +30,7 @@ _PROTOTYPE( void init_sensitivity, (struct sensitivity ****sens_));
 char initialise(struct proces_data ***data, struct sensitivity ****sens)
 {
   int i;
+  printf("Initialising synchronisation server!\n");
   init_proces_data(data);
   init_sensitivity(sens);
  
@@ -64,7 +66,6 @@ void init_sensitivity(struct sensitivity ****sens)
   const int spp = sizeof(struct sensitivity **); /* sensitivity pointer pointer size */
   const int sp = sizeof(struct sensitivity *); /* sensitivty pointer size */
   const int s = sizeof(struct sensitivity); /* sensitivity size */
-  printf("sensitivity %x\n", sens);
   *sens = malloc(spp * NUM_PROCES_TYPES);
   for (i=0; i<NUM_PROCES_TYPES+1; i++){
     num_procs = get_num_procs(i);
@@ -137,6 +138,8 @@ char init_process(struct proces_data *data, char target_proces, int proces_id)
         break;
       case HDS_TREIN:
         treinbaan_start(child_data);
+      case RANGEER_PROCES:
+        rangeer_start(child_data);
         break;
       default:
         printf("target_proces: %d not found\n", target_proces);

@@ -24,13 +24,13 @@ void ontkoppel_start(struct exec_data data)
 
   /* send alphabet to synchronisation server */
   send_alphabet(data, ONTKOPPEL_PROCES, data.system_id, ALPHABET, alpha_c);
-
+  sleep(START_PROCES_WAIT_TIME);
   /* initial sensitivity and send to sync serv */
   curr_sens[0] = HOOG_LAAG;
   curr_len = 1;
   set_sensitivity(data, curr_sens, curr_len);
 
-  while(KILL_PROCES){
+  while(1){
     size = receive_action(data, &cmd, buff); /* receive action from sync serv */
     if (cmd == SET_STATE){ 
       /* if new state of proces, update sensitivity and send to sync serv */

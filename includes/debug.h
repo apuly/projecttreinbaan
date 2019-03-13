@@ -5,3 +5,5 @@
 #define DEBUG_SYNC      0
 #define DEBUG_INIT      0
 #define DEBUG_HDS_SENSOR 0
+#define DEBUG_TREINBAAN 0
+#define DEBUG_RANGEER 0

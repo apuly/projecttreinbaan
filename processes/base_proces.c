@@ -9,8 +9,6 @@
 
 #define wrt_i(val) write(data.write_fd, &val, sizeof(int))
 #define i_size sizeof(int)
-_PROTOTYPE(void send_sync_cmd, (struct exec_data data, int cmd, int pid,
-                                int sid, int arg));
 
 /* send a command to the synchronisation server */
 void send_sync_cmd(data, cmd, pid, sid, arg)

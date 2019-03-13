@@ -7,8 +7,12 @@
 #define SENSOR_PROCES 3
 #define HDS_SENSOR 4
 #define HDS_TREIN 5
+#define RANGEER_PROCES 6
 
 #define KILL_PROCES 1 /* if set to 0, processes will terminate directly after init */
+
+#define START_PROCES_WAIT_TIME 2 /* time in seconds between proces init and 
+sending of sensitivity*/
 
 struct exec_data { /* data for executing tasks */
   int read_fd; /* file discriptor to read from parent proces */
@@ -31,4 +35,7 @@ void register_tock(struct exec_data data);
 void set_sensitivity(struct exec_data data, int *sens, int sens_c);
 void rem_sensitivity(struct exec_data data, int *sens, int sens_c);
 
+
+
+void send_sync_cmd(struct exec_data data, int cmd, int pid, int sid, int arg);
 #endif /* _TREINBAAN_PROCES_H_ */
