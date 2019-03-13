@@ -19,6 +19,8 @@ struct exec_data { /* data for executing tasks */
 /*void stuur_alphabet(struct exec_data *data, int *alpha, const int alpha_c);*/
 void tock(struct exec_data data);
 
+void send_sync_cmd(struct exec_data data, int cmd, int pid, int sid, int arg);
+
 void send_alphabet(struct exec_data data, int proces_type,
                     int proces_id, int *alpha, const int alpha_c);
 

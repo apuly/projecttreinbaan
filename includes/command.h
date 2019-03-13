@@ -1,6 +1,7 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
 
+#define NO_ACTION -1 /* No action needs to be taken*/
 #define SET_ALPHA  0 /* set the alphabet  for a proces */
 #define SET_SENS   1 /* sets the senstitivity of a proces in the sync serv */
 #define REM_SENS   2 /* removes a sensitivity of a proces in the sync serv */

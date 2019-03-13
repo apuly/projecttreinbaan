@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #include "../includes/proces.h"
 #include "../includes/command.h"
@@ -9,8 +10,6 @@
 
 #define wrt_i(val) write(data.write_fd, &val, sizeof(int))
 #define i_size sizeof(int)
-_PROTOTYPE(void send_sync_cmd, (struct exec_data data, int cmd, int pid,
-                                int sid, int arg));
 
 /* send a command to the synchronisation server */
 void send_sync_cmd(data, cmd, pid, sid, arg)
@@ -113,7 +112,17 @@ int *buff; /* buffer where the command parameters will be written to */
   /*read data from SynchronisationServer pipe*/
   /*return the size of the param buffer*/
   int len;
-  read(data.read_fd, cmd, sizeof(int));
+  int error;
+  error = read(data.read_fd, cmd, sizeof(int));
+
+  /* error check for nonblocking pipes */
+  if(error == -1){
+    if(errno == EAGAIN){  /* if the pipe is empty */
+      cmd = NO_ACTION;    /* set the comand to no action */
+      len = 0;            /* set len to 0, because there will be no data in the buffer */
+      return len;           /* then return len */
+    }
+  }
 #if DEBUG_SYNC 
   printf("cmd: %d;", *cmd);
 #endif

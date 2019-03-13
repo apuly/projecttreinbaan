@@ -1,10 +1,10 @@
 #ifndef _SYNC_H_
 #define _SUNC_H_
 
-#define NUM_WISSELS 2
-#define NUM_ONTKOPPEL 4
-#define NUM_LOCOMOTIEF 2
-#define NUM_SENSORS 1
+#define NUM_WISSELS 0
+#define NUM_ONTKOPPEL 0
+#define NUM_LOCOMOTIEF 0
+#define NUM_SENSORS 16
 #define NUM_HDS_SENSOR 1
 #define NUM_PROCES_TYPES 6
 
