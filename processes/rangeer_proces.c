@@ -24,6 +24,15 @@ struct sens update_sens(struct exec_data data, struct sens new_sens,
 void init_rangeer(struct exec_data data);
 struct sens set_sens(int p_id, int sys_id, int sens_id);
 
+/*
+ * Demo:
+ * Locomotief 1 vooruit.
+ * Locomotief 1 langzaam.
+ * Wacht op bepaalde sensor.
+ * Ontkoppelaar ... hoog_laag.
+ * Wacht op bepaalde sensor (of sleep(2))
+ * Locomotief 1 stop.
+ */
 
 void rangeer_start(struct exec_data data)
 {
@@ -36,9 +45,14 @@ void rangeer_start(struct exec_data data)
   send_sync_cmd(data, SET_SENS, c_sens.proc, c_sens.sys, c_sens.sens);
   while(1){
     sleep(2);
-    c_sens = update_sens(data, set_sens(WISSEL_PROCES, 0, RECHT), c_sens);
+    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, VOORUIT), c_sens);
     sleep(2);
-    c_sens = update_sens(data, set_sens(WISSEL_PROCES, 0, KROM), c_sens);
+    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, LANGZAAM), c_sens);
+    sleep(2);
+	/*wacht op bepaalde sensor*/
+	/*c_sens = update_sens(data, set_sens(ONTKOPPEL_PROCES, ?, HOOG_LAAG), c_sens);*/
+	/*sleep(2);*/
+    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, STOP), c_sens);
   }
 }
 
