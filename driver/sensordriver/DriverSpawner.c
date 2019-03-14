@@ -21,10 +21,11 @@
 
 #include "linkedlist.h"
 
+#include "../../includes/sync.h"
 #include "../../includes/proces.h"
 #include "../../includes/command.h"
+#include "../../includes/sensor.h"
 #include "../../includes/debug.h"
-#include "../../includes/sensor_driver.h"
 
 
 struct sensorupdate* read_driver(int driver_pipe);
@@ -42,6 +43,7 @@ int main(int argc, char *argv[], char *env[])
 #else
   void sensor_event_start(struct exec_data, int driver_pipe, pid_t driver_pid);
 
+int send_init_alphabet(struct exec_data data);
 
 void setup_sensorsub(struct exec_data data)
 #endif
@@ -50,8 +52,6 @@ void setup_sensorsub(struct exec_data data)
   int driverPipe[2];
   pid_t pid;
   int error;
-
-  char minibuf[100];
 
   printf("sensor subsystem started\n");
 
@@ -123,6 +123,10 @@ void sensor_event_start(struct exec_data data, int driver_pipe, pid_t driver_pid
   int error;
   int cmd, buff[10];
 
+#if standaloneSensor == 0
+  send_init_alphabet(data);
+#endif
+
   while (KILL_PROCES)
   {
     size_t number = 0;
@@ -139,12 +143,12 @@ void sensor_event_start(struct exec_data data, int driver_pipe, pid_t driver_pid
     if(cmd == EXIT){
       int error = kill(driver_pid, SIGTERM);
       if(error == -1){
-        perror("sensor subsystem: driver doesn't want to exit peacefully");
+        perror("Sensor Hds: driver doesn't want to exit peacefully");
         error = kill(driver_pid, SIGKILL);
         if(error == -1){
-          perror("sensor subsystem: bruteforce doesn't work either... god have mercy");
+          perror("Sensor Hds: bruteforce doesn't work either... god have mercy");
         }else{
-          printf("sensor subsystem: bruteforce worked though\n");
+          printf("Sensor Hds: bruteforce worked though\n");
         }
       }
       exit(0);
@@ -189,6 +193,21 @@ struct sensorupdate* read_driver(int driver_pipe)
   return NULL;
 }
 
+int send_init_alphabet(struct exec_data data){
+  int type, num_proc, num_sens;
+  /* iterate through all sensors and mark their alphabet */
+  type = SENSOR_PROCES;
+  num_proc = get_num_procs(type);
+  num_sens = get_num_sens(type);
+
+  send_alpha(data, type, num_proc, num_sens);
+
+  #if DEBUG_HDS_SENSOR
+  printf("Sensor Subsystem: alphabet sent to sync server\n");
+  fflush(stdout);
+  #endif
+}
+
 int send_update(struct exec_data data, struct sensorupdate* SensUpdate)
 {
   /*sensitivity arrays, needed for send_sensitivity */
@@ -197,26 +216,26 @@ int send_update(struct exec_data data, struct sensorupdate* SensUpdate)
 
   int sens_num = (int)(SensUpdate->sensor);
   int sens_state = (int)(SensUpdate->state);
-
   /*  check the current state, this is the new sensitivity
       the old sensitivity is !sensState
    */
   if(sens_state){
-    new_sens = 1;
-    curr_sens = 0;
+    new_sens = HOOG;
+    curr_sens = LAAG;
   }else{
-    new_sens = 0;
-    curr_sens = 1;
+    new_sens = LAAG;
+    curr_sens = HOOG;
   }
 
   /* now what we have to do is send the new sensitivity */
   /* might be best to call send_sync_cmd directly */ 
   /* remove old sensitivity */
-  send_sync_cmd(data, REM_SENS, sens_num, SENSOR_PROCES, curr_sens);
+  send_sync_cmd(data, REM_SENS, SENSOR_PROCES, sens_num, curr_sens);
   /* set new sensitivity */
-  send_sync_cmd(data, SET_SENS, sens_num, SENSOR_PROCES, new_sens);
+  send_sync_cmd(data, SET_SENS, SENSOR_PROCES, sens_num, new_sens);
 
+#if DEBUG_HDS_SENSOR
   printf("sensor sub: sensitivity set\n");
-  fflush(stdout);
+#endif
 }
 

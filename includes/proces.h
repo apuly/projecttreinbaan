@@ -29,6 +29,9 @@ void send_sync_cmd(struct exec_data data, int cmd, int pid, int sid, int arg);
 void send_alphabet(struct exec_data data, int proces_type,
                     int proces_id, int *alpha, const int alpha_c);
 
+
+void send_alpha(struct exec_data data, int proc_id, int num_procs, int alpha_c);
+
 int send_sensitivity(struct exec_data data, int *c_sens, int c_len,
                               int *n_sens, int n_len);
 int receive_action(struct exec_data data, int *cmd, int *buff);
@@ -37,7 +40,4 @@ void register_tock(struct exec_data data);
 void set_sensitivity(struct exec_data data, int *sens, int sens_c);
 void rem_sensitivity(struct exec_data data, int *sens, int sens_c);
 
-
-
-void send_sync_cmd(struct exec_data data, int cmd, int pid, int sid, int arg);
 #endif /* _TREINBAAN_PROCES_H_ */

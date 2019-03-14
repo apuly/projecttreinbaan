@@ -133,3 +133,13 @@ int *buff; /* buffer where the command parameters will be written to */
   read(data.read_fd, buff, len*sizeof(int));
   return len;
 }
+
+void send_alpha(struct exec_data data, int proc_id, int num_procs, int alpha_c)
+{
+  int sys_id, i;
+  for (sys_id=0; sys_id<num_procs; sys_id++){
+    for (i=0; i<alpha_c; i++){
+      send_sync_cmd(data, SET_ALPHA, proc_id, sys_id, i);
+    }
+  }
+}
