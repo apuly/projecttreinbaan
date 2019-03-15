@@ -14,6 +14,7 @@
 #include "../includes/proces.h"
 #include "../includes/sync.h"
 #include "../includes/command.h"
+#include "../includes/debug.h"
 
 #define FINAL_MAIN
 

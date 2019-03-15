@@ -11,7 +11,7 @@
 
 #define KILL_PROCES 1 /* if set to 0, processes will terminate directly after init */
 
-#define START_PROCES_WAIT_TIME 2 /* time in seconds between proces init and 
+#define START_PROCES_WAIT_TIME 5 /* time in seconds between proces init and 
 sending of sensitivity*/
 
 struct exec_data { /* data for executing tasks */
