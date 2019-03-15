@@ -37,14 +37,20 @@ struct sens set_sens(int p_id, int sys_id, int sens_id);
 void set_all(struct exec_data data, int sys_id, int sens_id);
 void unset_all(struct exec_data data, int sys_id, int sens_id);
 
+void wait_for_sens(struct exec_data, struct sens);
+
 void rangeer_start(struct exec_data data)
 {
   int i = 0;
+  unsigned int time = 0;
   struct sens c_sens;/*the current sensitivity*/
   init_rangeer(data);
   
-  sleep(START_PROCES_WAIT_TIME);
-
+  /* force the sleep */
+  time = sleep(START_PROCES_WAIT_TIME);
+  while(time){
+    time = sleep(time);
+  }
   /* correct any errors on the sensors */
   set_all(data, SENSOR_PROCES, LAAG);
   sleep(1);
@@ -57,8 +63,11 @@ void rangeer_start(struct exec_data data)
     c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, VOORUIT), c_sens);
     sleep(2);
     c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, LANGZAAM), c_sens);
-    sleep(2);
 	/*wacht op bepaalde sensor*/
+    c_sens = update_sens(data, set_sens(SENSOR_PROCES, 0, HOOG), c_sens);
+    wait_for_sens(data, set_sens(SENSOR_PROCES, 0, HOOG));
+    c_sens = update_sens(data, set_sens(SENSOR_PROCES, 0, LAAG), c_sens);
+
 	/*c_sens = update_sens(data, set_sens(ONTKOPPEL_PROCES, ?, HOOG_LAAG), c_sens);*/
 	/*sleep(2);*/
     c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, STOP), c_sens);
@@ -117,3 +126,29 @@ void unset_all(struct exec_data data, int proc_id, int sens_id){
     send_sync_cmd(data, REM_SENS, proc_id, i, sens_id);
   }
 }
+
+void wait_for_sens(struct exec_data data, struct sens wait_sens){
+  int size, cmd, buff[10], proc_id, sys_id, state;
+
+  /* wait for the right sensitivity to be told */
+  while(1){
+    size = receive_action(data, &cmd, buff); /* recieve action from sync serv */
+    if(cmd == HDS_ACTION){
+      proc_id = buff[0];
+      sys_id = buff[1];
+      state = buff[2];
+      if( 
+         (wait_sens.proc == proc_id) &&
+         (wait_sens.sys == sys_id  ) &&
+         (wait_sens.sens == state  )
+        ){
+        #if DEBUG_RANGEER
+          printf("done waiting on %d:%d:%d\n",proc_id, sys_id, state);
+        #endif
+        break;
+      }
+    } 
+  }
+  return;
+}
+

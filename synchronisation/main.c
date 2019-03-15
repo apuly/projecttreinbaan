@@ -63,6 +63,7 @@ void send_state(struct proces_data data, int proc_id, int sys_id, int state)
   buff_[1] = sys_id;
   buff_[2] = state;
   write_command(glob_data[HDS_TREIN][0].write_fd, HDS_ACTION, buff_, 3);
+  write_command(glob_data[RANGEER_PROCES][0].write_fd, HDS_ACTION, buff_, 3);
 }
 /*reads a commando from a proces pipe*/
 void read_command(int fd, int *command, int *param, int *paramc)
@@ -149,7 +150,7 @@ int *paramv; /* pointer to the array of parameters */
   sens_id = paramv[2];
   sens = &(glob_sens[proc_id][sys_id][sens_id]);
   sens->cur++;
-  if (sens->cur == sens->max){
+  if ((sens->cur == sens->max) && (sens->max > 1)){
     data = glob_data[proc_id][sys_id];
     send_state(data, proc_id, sys_id, sens_id);
     /* send action to hardware specific software */
