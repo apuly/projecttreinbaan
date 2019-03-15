@@ -1,3 +1,13 @@
+/*
+ * Demo:
+ * Locomotief 1 vooruit.
+ * Locomotief 1 langzaam.
+ * Wacht op bepaalde sensor.
+ * Ontkoppelaar ... hoog_laag.
+ * Wacht op bepaalde sensor (of sleep(2))
+ * Locomotief 1 stop.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -24,15 +34,8 @@ struct sens update_sens(struct exec_data data, struct sens new_sens,
 void init_rangeer(struct exec_data data);
 struct sens set_sens(int p_id, int sys_id, int sens_id);
 
-/*
- * Demo:
- * Locomotief 1 vooruit.
- * Locomotief 1 langzaam.
- * Wacht op bepaalde sensor.
- * Ontkoppelaar ... hoog_laag.
- * Wacht op bepaalde sensor (of sleep(2))
- * Locomotief 1 stop.
- */
+void set_all(struct exec_data data, int sys_id, int sens_id);
+void unset_all(struct exec_data data, int sys_id, int sens_id);
 
 void rangeer_start(struct exec_data data)
 {
@@ -41,6 +44,12 @@ void rangeer_start(struct exec_data data)
   init_rangeer(data);
   
   sleep(START_PROCES_WAIT_TIME);
+
+  /* correct any errors on the sensors */
+  set_all(data, SENSOR_PROCES, LAAG);
+  sleep(1);
+  unset_all(data, SENSOR_PROCES, LAAG);
+
   c_sens = set_sens(WISSEL_PROCES, 0, KROM);
   send_sync_cmd(data, SET_SENS, c_sens.proc, c_sens.sys, c_sens.sens);
   while(1){
@@ -88,3 +97,23 @@ void init_rangeer(struct exec_data data)
   }
 }
 
+
+void set_all(struct exec_data data, int proc_id, int sens_id){
+  int num_proc, i;
+
+  num_proc = get_num_procs(proc_id);
+
+  for(i = 0; i<num_proc; i++){
+    send_sync_cmd(data, SET_SENS, proc_id, i, sens_id);
+  }
+}
+
+void unset_all(struct exec_data data, int proc_id, int sens_id){
+  int num_proc, i;
+  
+  num_proc = get_num_procs(proc_id);
+
+  for(i = 0; i<num_proc; i++){
+    send_sync_cmd(data, REM_SENS, proc_id, i, sens_id);
+  }
+}

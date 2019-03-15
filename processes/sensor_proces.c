@@ -25,7 +25,7 @@ void sensor_start(struct exec_data data)
   send_alphabet(data, SENSOR_PROCES, data.system_id, ALPHABET, alpha_c);
   sleep(START_PROCES_WAIT_TIME);
   /*set initial sensitivity and send to sync serv */
-  curr_sens[0] = LAAG;
+  curr_sens[0] = HOOG;
   curr_len = 1;
   set_sensitivity(data, curr_sens, curr_len);
 

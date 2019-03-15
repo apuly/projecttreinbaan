@@ -44,6 +44,7 @@ int main(int argc, char *argv[], char *env[])
   void sensor_event_start(struct exec_data, int driver_pipe, pid_t driver_pid);
 
 int send_init_alphabet(struct exec_data data);
+int send_init_sens(struct exec_data data);
 
 void setup_sensorsub(struct exec_data data)
 #endif
@@ -125,6 +126,9 @@ void sensor_event_start(struct exec_data data, int driver_pipe, pid_t driver_pid
 
 #if standaloneSensor == 0
   send_init_alphabet(data);
+  sleep(START_PROCES_WAIT_TIME);
+
+  send_init_sens(data);
 #endif
 
   while (KILL_PROCES)
@@ -206,6 +210,18 @@ int send_init_alphabet(struct exec_data data){
   printf("Sensor Subsystem: alphabet sent to sync server\n");
   fflush(stdout);
   #endif
+}
+
+int send_init_sens(struct exec_data data){
+  int type, num_proc, num_sens, i;
+  /* itereate through all sensors and mark them as low */
+  type = SENSOR_PROCES;
+  num_proc = get_num_procs(type);
+  num_sens = get_num_sens(type);
+  
+  for(i = 0; i<num_proc; i++){
+    send_sync_cmd(data, SET_SENS, SENSOR_PROCES, i, LAAG);
+  }
 }
 
 int send_update(struct exec_data data, struct sensorupdate* SensUpdate)
