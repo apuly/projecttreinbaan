@@ -37,6 +37,7 @@ struct sens set_sens(int p_id, int sys_id, int sens_id);
 void set_all(struct exec_data data, int sys_id, int sens_id);
 void unset_all(struct exec_data data, int sys_id, int sens_id);
 
+void send_sens(struct exec_data, int p_id, int sys_id, int sens_id);
 void wait_for_sens(struct exec_data, struct sens);
 
 void rangeer_start(struct exec_data data)
@@ -64,10 +65,7 @@ void rangeer_start(struct exec_data data)
     sleep(2);
     c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, LANGZAAM), c_sens);
 	/*wacht op bepaalde sensor*/
-    c_sens = update_sens(data, set_sens(SENSOR_PROCES, 0, HOOG), c_sens);
-    wait_for_sens(data, set_sens(SENSOR_PROCES, 0, HOOG));
-    c_sens = update_sens(data, set_sens(SENSOR_PROCES, 0, LAAG), c_sens);
-
+    send_sens(data, SENSOR_PROCES, 0, HOOG);
 	/*c_sens = update_sens(data, set_sens(ONTKOPPEL_PROCES, ?, HOOG_LAAG), c_sens);*/
 	/*sleep(2);*/
     c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, STOP), c_sens);
@@ -125,6 +123,17 @@ void unset_all(struct exec_data data, int proc_id, int sens_id){
   for(i = 0; i<num_proc; i++){
     send_sync_cmd(data, REM_SENS, proc_id, i, sens_id);
   }
+}
+
+void send_sens(struct exec_data data, int p_id, int sys_id, int sens_id){
+  struct sens s_;
+
+  s_ = set_sens(p_id, sys_id, sens_id);
+
+  send_sync_cmd(data, SET_SENS, p_id, sys_id, sens_id);
+  wait_for_sens(data, set_sens(p_id, sys_id, sens_id));
+  send_sync_cmd(data, REM_SENS, p_id, sys_id, sens_id);
+  
 }
 
 void wait_for_sens(struct exec_data data, struct sens wait_sens){
