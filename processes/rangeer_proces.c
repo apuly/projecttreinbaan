@@ -52,15 +52,6 @@ void rangeer_start(struct exec_data data)
   while(time){
     time = sleep(time);
   }
-  /* correct any errors on the sensors */
-  set_all(data, SENSOR_PROCES, LAAG);
-  sleep(1);
-  unset_all(data, SENSOR_PROCES, LAAG);
-
-
-    send_sens(data, WISSEL_PROCES, 9, KROM);
-    sleep(2);
-    send_sens(data, WISSEL_PROCES, 9, RECHT);
 
   /* rijd achteruit voorbij de ontkoppelaar */
     send_sens(data, LOCOMOTIEF_PROCES, 0, ACHTERUIT);
@@ -68,19 +59,21 @@ void rangeer_start(struct exec_data data)
 
     /*wacht op bepaalde sensor*/
     send_sens(data, SENSOR_PROCES, 5, HOOG);
-
+    /* laat de trein vooruit rijden */
     send_sens(data, LOCOMOTIEF_PROCES, 0, STOP);
     send_sens(data, LOCOMOTIEF_PROCES, 0, VOORUIT);
     send_sens(data, LOCOMOTIEF_PROCES, 0, LANGZAAM);
 
+    /* schakel de ontkoppelaar boven sensor 7 */
     send_sens(data, SENSOR_PROCES, 7, HOOG);
     send_sens(data, WISSEL_PROCES, 9, KROM);
     send_sens(data, ONTKOPPEL_PROCES, 3, HOOG_LAAG);
 
+    /* stop aan het einde van de rails */
     send_sens(data, SENSOR_PROCES, 33, HOOG);
     send_sens(data, LOCOMOTIEF_PROCES, 0, STOP);
        while(1){
-
+      /*program done, wait for the user to shut it off */
     }
 
 }
