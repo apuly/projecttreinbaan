@@ -1,9 +1,9 @@
 #define DEBUG_LOCO      0
 #define DEBUG_ONTKOPPEL 0
-#define DEBUG_WISSEL    1
-#define DEBUG_SENSOR    1
+#define DEBUG_WISSEL    0
+#define DEBUG_SENSOR    0
 #define DEBUG_SYNC      1
-#define DEBUG_INIT      1
-#define DEBUG_HDS_SENSOR 1
-#define DEBUG_TREINBAAN 1
+#define DEBUG_INIT      0
+#define DEBUG_HDS_SENSOR 0
+#define DEBUG_TREINBAAN 0
 #define DEBUG_RANGEER 1

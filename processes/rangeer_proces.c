@@ -57,19 +57,32 @@ void rangeer_start(struct exec_data data)
   sleep(1);
   unset_all(data, SENSOR_PROCES, LAAG);
 
-  c_sens = set_sens(WISSEL_PROCES, 0, KROM);
-  send_sync_cmd(data, SET_SENS, c_sens.proc, c_sens.sys, c_sens.sens);
-  while(1){
+
+    send_sens(data, WISSEL_PROCES, 9, KROM);
     sleep(2);
-    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, VOORUIT), c_sens);
-    sleep(2);
-    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, LANGZAAM), c_sens);
-	/*wacht op bepaalde sensor*/
-    send_sens(data, SENSOR_PROCES, 0, HOOG);
-	/*c_sens = update_sens(data, set_sens(ONTKOPPEL_PROCES, ?, HOOG_LAAG), c_sens);*/
-	/*sleep(2);*/
-    c_sens = update_sens(data, set_sens(LOCOMOTIEF_PROCES, 0, STOP), c_sens);
-  }
+    send_sens(data, WISSEL_PROCES, 9, RECHT);
+
+  /* rijd achteruit voorbij de ontkoppelaar */
+    send_sens(data, LOCOMOTIEF_PROCES, 0, ACHTERUIT);
+    send_sens(data, LOCOMOTIEF_PROCES, 0, LANGZAAM);
+
+    /*wacht op bepaalde sensor*/
+    send_sens(data, SENSOR_PROCES, 5, HOOG);
+
+    send_sens(data, LOCOMOTIEF_PROCES, 0, STOP);
+    send_sens(data, LOCOMOTIEF_PROCES, 0, VOORUIT);
+    send_sens(data, LOCOMOTIEF_PROCES, 0, LANGZAAM);
+
+    send_sens(data, SENSOR_PROCES, 7, HOOG);
+    send_sens(data, WISSEL_PROCES, 9, KROM);
+    send_sens(data, ONTKOPPEL_PROCES, 3, HOOG_LAAG);
+
+    send_sens(data, SENSOR_PROCES, 33, HOOG);
+    send_sens(data, LOCOMOTIEF_PROCES, 0, STOP);
+       while(1){
+
+    }
+
 }
 
 struct sens update_sens(struct exec_data data, struct sens new_sens,
@@ -131,7 +144,7 @@ void send_sens(struct exec_data data, int p_id, int sys_id, int sens_id){
   s_ = set_sens(p_id, sys_id, sens_id);
 
   send_sync_cmd(data, SET_SENS, p_id, sys_id, sens_id);
-  wait_for_sens(data, set_sens(p_id, sys_id, sens_id));
+  wait_for_sens(data, s_);
   send_sync_cmd(data, REM_SENS, p_id, sys_id, sens_id);
   
 }
